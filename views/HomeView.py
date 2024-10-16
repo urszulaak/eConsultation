@@ -37,6 +37,7 @@ class HomeView(View):
         text_lines = text.splitlines()
         max_ascii_width = max(len(line) for line in ascii_lines)
         max_text_width = max(len(line) for line in text_lines)
+        menu_hight = 0
 
         for i, line in enumerate(ascii_lines):
             stdscr.addstr(0 + i, 0, line)
@@ -48,29 +49,40 @@ class HomeView(View):
         right_ascii_x = w - max_ascii_width
         for i, line in enumerate(ascii_lines):
             stdscr.addstr(0 + i, right_ascii_x, line)
+            menu_hight +=1
 
         stdscr.attron(curses.color_pair(1))
-        stdscr.hline(h // 4, 0, ' ', w)
+        stdscr.hline(menu_hight , 0, ' ', w)
         stdscr.attroff(curses.color_pair(1))
+        stdscr.border()
         stdscr.refresh()
-        self._move(stdscr, h, w)
+        self._move(stdscr, h, w, menu_hight)
 
 
     def _content(self, stdscr, current_row, h, w, content):
-        curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_BLUE)
+        curses.init_pair(2, curses.COLOR_RED, curses.COLOR_WHITE)
+        x=0
+        y=0
+        p = w // 3
+        q = h - h // 3
         for id, row in enumerate(content):
             x = w // 2 - len(row) // 2
-            y = h // 2 - len(content) // 2 +id
+            y = h // 2 - len(content) // 2 + id*2
             if id == current_row:
                 stdscr.attron(curses.color_pair(2))
                 stdscr.addstr(y, x, row)
                 stdscr.attroff(curses.color_pair(2))
             else:
                 stdscr.addstr(y, x, row)
-        stdscr.refresh()
 
+    def _clearContent(self, stdscr, h, w, menu_hight):
+        inner_h = h - (menu_hight + 2)
+        inner_w = w - 2
 
-    def _move(self, stdscr, h, w):
+        for i in range(menu_hight + 1, menu_hight + 1 + inner_h):
+            stdscr.addstr(i, 1, ' ' * inner_w) 
+
+    def _move(self, stdscr, h, w, menu_hight):
         current_row = 0
         content = ['Login', 'Register', 'Information', 'Graphic version', 'Exit']
         self._content(stdscr, current_row, h, w, content)
@@ -81,7 +93,7 @@ class HomeView(View):
             elif key == curses.KEY_DOWN and current_row < len(content)-1:
                 current_row += 1
             elif key == curses.KEY_ENTER or key in [10, 13]:
-                stdscr.getch()
+                self._clearContent(stdscr, h, w, menu_hight)
                 self.homeController._menuChoice(current_row)
             
             self._content(stdscr, current_row, h, w, content)
