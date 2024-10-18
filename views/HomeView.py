@@ -2,6 +2,7 @@ from core.View import View
 import curses
 from curses import wrapper
 from curses.textpad import Textbox, rectangle
+import time
 
 class HomeView(View):
 
@@ -96,11 +97,14 @@ class HomeView(View):
 
 
     def _clearContent(self, stdscr, h, w, menu_height):
-        inner_h = h - (menu_height + 2)
-        inner_w = w - 2
+        start_y = menu_height + 1
+        end_y = h - 1
 
-        for i in range(menu_height + 1, menu_height + 1 + inner_h):
-            stdscr.addstr(i, 1, ' ' * inner_w) 
+        for i in range(start_y, end_y):
+            stdscr.move(i, 1)
+            stdscr.clrtoeol()
+        stdscr.border()
+        stdscr.refresh()
 
     def _move(self, stdscr, h, w, menu_height):
         current_row = 0
