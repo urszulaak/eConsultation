@@ -7,10 +7,10 @@ class Controller(metaclass=abc.ABCMeta):
     def main(self):
         return
 
-    def loadView(self, viewName):
+    def loadView(self, view):
         response = None
         
-        viewName = viewName[0].upper()+viewName[1:]+"View"
+        viewName = view[0].upper()+view[1:]+"View"
 
         module = importlib.import_module("views."+viewName)
         class_ = getattr(module, viewName)
