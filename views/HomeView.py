@@ -37,7 +37,7 @@ class HomeView(View):
         text_lines = text.splitlines()
         max_ascii_width = max(len(line) for line in ascii_lines)
         max_text_width = max(len(line) for line in text_lines)
-        menu_hight = 0
+        menu_height = 0
 
         for i, line in enumerate(ascii_lines):
             stdscr.addstr(0 + i, 0, line)
@@ -49,54 +49,87 @@ class HomeView(View):
         right_ascii_x = w - max_ascii_width
         for i, line in enumerate(ascii_lines):
             stdscr.addstr(0 + i, right_ascii_x, line)
-            menu_hight +=1
+            menu_height +=1
 
         stdscr.attron(curses.color_pair(1))
-        stdscr.hline(menu_hight , 0, ' ', w)
+        stdscr.hline(menu_height , 0, ' ', w)
         stdscr.attroff(curses.color_pair(1))
         stdscr.border()
         stdscr.refresh()
-        self._move(stdscr, h, w, menu_hight)
+        self._move(stdscr, h, w, menu_height)
 
 
-    def _content(self, stdscr, current_row, h, w, content):
+    def _content(self, stdscr, current_row, h, w, content, menu_height):
+        
+        menu_height += 1
+
         curses.init_pair(2, curses.COLOR_RED, curses.COLOR_WHITE)
-        x=0
-        y=0
-        p = w // 3
-        q = h - h // 3
-        for id, row in enumerate(content):
-            x = w // 2 - len(row) // 2
-            y = h // 2 - len(content) // 2 + id*2
-            if id == current_row:
-                stdscr.attron(curses.color_pair(2))
-                stdscr.addstr(y, x, row)
-                stdscr.attroff(curses.color_pair(2))
-            else:
-                stdscr.addstr(y, x, row)
+        num_items = len(content)
+        
+        available_height = h - menu_height
+        
+        box_height = available_height // num_items
+        
+        box_width = w - 2
 
-    def _clearContent(self, stdscr, h, w, menu_hight):
-        inner_h = h - (menu_hight + 2)
+        for id, row in enumerate(content):
+            x = 1
+            y = menu_height + id * box_height
+
+            win = curses.newwin(box_height, box_width, y, x)
+            win.box()
+
+            text_x = (box_width - len(row)) // 2
+            text_y = box_height // 2
+
+            if id == current_row:
+                win.attron(curses.color_pair(2))
+                win.addstr(text_y, text_x, row)
+                win.attroff(curses.color_pair(2))
+            else:
+                win.addstr(text_y, text_x, row)
+
+            win.refresh()
+
+        stdscr.refresh()
+
+
+
+    def _clearContent(self, stdscr, h, w, menu_height):
+        inner_h = h - (menu_height + 2)
         inner_w = w - 2
 
-        for i in range(menu_hight + 1, menu_hight + 1 + inner_h):
+        for i in range(menu_height + 1, menu_height + 1 + inner_h):
             stdscr.addstr(i, 1, ' ' * inner_w) 
 
-    def _move(self, stdscr, h, w, menu_hight):
+    def _move(self, stdscr, h, w, menu_height):
         current_row = 0
-        content = ['Login', 'Register', 'Information', 'Graphic version', 'Exit']
-        self._content(stdscr, current_row, h, w, content)
+        content = ['Login [L]', 'Register [R]', 'Information [I]', 'Graphic version [G]', 'Exit [E]']
+        self._content(stdscr, current_row, h, w, content, menu_height)
         while 1:
             key = stdscr.getch()
-            if key == curses.KEY_UP and current_row > 0:
+            if key == (curses.KEY_UP) and current_row > 0:
                 current_row -= 1
             elif key == curses.KEY_DOWN and current_row < len(content)-1:
                 current_row += 1
             elif key == curses.KEY_ENTER or key in [10, 13]:
-                self._clearContent(stdscr, h, w, menu_hight)
+                self._clearContent(stdscr, h, w, menu_height)
+                self.homeController._menuChoice(current_row)
+            elif key in [ord('l'), ord('r'), ord('i'), ord('g'), ord('e')]:
+                if key == ord('l'):
+                    current_row = 0
+                elif key == ord('r'):
+                    current_row = 1
+                elif key == ord('i'):
+                    current_row = 2
+                elif key == ord('g'):
+                    current_row = 3
+                elif key == ord('e'):
+                    current_row = 4
+                self._clearContent(stdscr, h, w, menu_height)
                 self.homeController._menuChoice(current_row)
             
-            self._content(stdscr, current_row, h, w, content)
+            self._content(stdscr, current_row, h, w, content, menu_height)
 
 
 
