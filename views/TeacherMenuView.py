@@ -7,15 +7,27 @@ class TeacherMenuView(View):
 
     def __init__(self, controller, response):
         super().__init__()
-        self.informationController = controller
+        self.teacherMenuController = controller
         self.response = response
 
     def _content(self, stdscr):
         curses.curs_set(0)
         h, w = stdscr.getmaxyx()
-        stdscr.addstr(h//2, w//2, str(self.response))
+        menu_height = 10
+        self._clearContent(stdscr, h, w, menu_height)
+        stdscr.addstr(h//2, w//2, "Teacher: "+str(self.response))
         stdscr.refresh()
         stdscr.getch()
+
+    def _clearContent(self, stdscr, h, w, menu_height):
+        start_y = menu_height + 1
+        end_y = h - 1
+
+        for i in range(start_y, end_y):
+            stdscr.move(i, 1)
+            stdscr.clrtoeol()
+        stdscr.border()
+        stdscr.refresh()
 
     def main(self):
         wrapper(self._content)

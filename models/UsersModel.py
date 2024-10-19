@@ -11,7 +11,7 @@ class UsersModel():
             charset="utf8"
         )
         if self.db.is_connected():
-            print('Connceted')
+            print('Connected')
         else:
             print('not connected')
         self.c = self.db.cursor()

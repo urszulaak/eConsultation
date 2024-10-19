@@ -11,8 +11,7 @@ class LoginController(Controller):
     def _logged(self, fields):
         response = self.usersModel._logged(fields)
         if response != 0:
-            print("Successfully logged!")
-            return 1
+            Core.openController("userMenu",response).main()
         else:
             return 0
         
@@ -21,7 +20,7 @@ class LoginController(Controller):
         if response != 0:
             Core.openController("teacherMenu",response).main()
         else:
-            Core.openController("userMenu",response).main()
+            self._logged(fields)
         
     def main(self):
         self.loginView.main()
