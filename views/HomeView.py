@@ -6,7 +6,7 @@ import time
 
 class HomeView(View):
 
-    def __init__(self, controller):
+    def __init__(self, controller,response=None):
         super().__init__()
         self.homeController = controller
 

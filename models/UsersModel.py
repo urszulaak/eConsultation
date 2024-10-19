@@ -17,17 +17,55 @@ class UsersModel():
         self.c = self.db.cursor()
 
 
-    def add(self, fields):
+    def _add(self, fields):
         response = 0
         try:
             self.c.execute(
                 "INSERT INTO users (LastName, FirstName, Login, Password, PhoneNumber, Email) VALUES (%s, %s, %s, %s, %s, %s)",
-                (fields[0], fields[1], fields[2], fields[3], fields[4], fields[5])
+                (fields[1], fields[2], fields[3], fields[4], fields[5], fields[6])
             )
+            self.db.commit()
+            response = self.c.rowcount
+            if(fields[0] == 't'):
+                self.c.execute(
+                "INSERT INTO teachers (ID) SELECT MAX(ID) FROM users"
+                )
             self.db.commit()
             response = self.c.rowcount
         except:
             pass
 
+    def _logged(self,fields):
+        response = 0
+        result = None
+        try:
+            self.c.execute(
+                "SELECT ID FROM users WHERE Login = %s AND Password = %s",
+                (fields[0], fields[1])
+            )
+            result = self.c.fetchone()
+            if result:
+                response = result[0]
+            else:
+                response = 0
+        except:
+            pass
+        return response
+    
+    def _isTeacher(self,fields):
+        response = 0
+        result = None
+        try:
+            self.c.execute(
+                "SELECT teachers.ID FROM teachers INNER JOIN users ON teachers.ID = users.ID WHERE users.Login = %s AND users.Password = %s",
+                (fields[0], fields[1])
+            )
+            result = self.c.fetchone()
+            if result:
+                response = result[0]
+            else:
+                response = 0
+        except:
+            pass
 
         return response

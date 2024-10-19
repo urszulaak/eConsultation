@@ -9,11 +9,14 @@ class RegisterController(Controller):
         self.usersModel = UsersModel()
 
     def _add(self, fields):
-        response = self.usersModel.add(fields)
+        response = self.usersModel._add(fields)
         if response > 0:
             print("Successfully added!")
         else:
             print("Error while adding")
+
+    def _added(self):
+        pass
         
     def main(self):
         self.registerView.main()

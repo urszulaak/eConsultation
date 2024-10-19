@@ -3,7 +3,7 @@ from core.Core import Core
 
 class HomeController(Controller):
 
-    def __init__(self):
+    def __init__(self,response=None):
         self.homeView = self.loadView("home")
 
     def _menuChoice(self, current_row):

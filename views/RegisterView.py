@@ -7,51 +7,51 @@ import os
 
 class RegisterView(View):
 
-    def __init__(self, controller):
+    def __init__(self, controller,response=None):
         super().__init__()
         self.registerController = controller
 
     def _content(self, stdscr):
-        curses.curs_set(1)  # Ustawienie widoczności kursora
+        curses.curs_set(1)
         locale.setlocale(locale.LC_ALL, '')
         stdscr.encoding = 'utf-8'
         os.environ['PYTHONIOENCODING'] = 'utf-8'
         h, w = stdscr.getmaxyx()
-        content = ['FirstName*: ', 'LastName*: ', 'Login*: ', 'Password*: ', 'PhoneNumber: ', 'Email: ']
-        menu_height = 10  # Dostosuj wysokość menu, jeśli to potrzebne
-        curses.init_pair(2, curses.COLOR_RED, curses.COLOR_WHITE)
-
+        content = ['Type of acc [t/s]*: ','FirstName*: ', 'LastName*: ', 'Login*: ', 'Password*: ', 'PhoneNumber: ', 'Email: ']
+        menu_height = 10
+        curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_BLACK)
+        available_height = h - menu_height
+        num_items = len(content) + 1
+        box_height = available_height // num_items
         fields = []
-
         for id, row in enumerate(content):
             x = 1
-            y = menu_height-1 + id*3  # Użyj 3 jako wysokości dla każdego pola
-            text_len=len(row)
-            win = curses.newwin(3, w - 2, y, x)  # Stworzenie okna dla każdego pola
-            win_text = curses.newwin(1, w - 4, y+2, x+1)
-
+            y = menu_height + id * box_height
+            win = curses.newwin(3, w - 4, y, x)
+            win_text = curses.newwin(1, w - 4, y+3, x+2)
             text_x = 2
             text_y = 1
-
+            win.attron(curses.color_pair(1))
             win.addstr(text_y, text_x, row)
+            win.attroff(curses.color_pair(1))
+            win.refresh()
 
             box = Textbox(win_text)
-            win.refresh()
+            win_text.refresh()
+
+            stdscr.hline(y + 4, x + 2, curses.ACS_HLINE, w - 8)
+            stdscr.refresh()
 
             input_text = ""
             while True:
                 input_text = box.edit()
-                
+                win_text.refresh()
                 fields.append(input_text.strip())
                 break
                 
-            win.refresh()
 
-        print(fields)
-        self.registerController._add(fields)
-        stdscr.refresh()
         self._clearContent(stdscr, h, w, menu_height)
-        self.registerController._added()
+        self.registerController._add(fields)
         stdscr.getch()
 
     def _clearContent(self, stdscr, h, w, menu_height):
