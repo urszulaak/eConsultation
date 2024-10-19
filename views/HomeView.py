@@ -80,6 +80,7 @@ class HomeView(View):
             win = curses.newwin(box_height, box_width, y, x)
             win.box()
 
+
             text_x = (box_width - len(row)) // 2
             text_y = box_height // 2
 
