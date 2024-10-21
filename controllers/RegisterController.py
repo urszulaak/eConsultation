@@ -4,7 +4,7 @@ from models.UsersModel import UsersModel
 
 class RegisterController(Controller):
 
-    def __init__(self):
+    def __init__(self,response=None):
         self.registerView = self.loadView("register")
         self.usersModel = UsersModel()
 

@@ -14,10 +14,10 @@ class LoginView(View):
         curses.curs_set(1)
         h, w = stdscr.getmaxyx()
         content = ['Login: ', 'Password: ']
-        menu_height = 10
+        menu_height = 9
         curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
-        available_height = h - menu_height
+        available_height = h - menu_height - 1
         num_items = len(content) + 1
         box_height = available_height // num_items
         fields = []

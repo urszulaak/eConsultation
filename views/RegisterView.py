@@ -18,7 +18,7 @@ class RegisterView(View):
         os.environ['PYTHONIOENCODING'] = 'utf-8'
         h, w = stdscr.getmaxyx()
         content = ['Type of acc [t/s]*: ','FirstName*: ', 'LastName*: ', 'Login*: ', 'Password*: ', 'PhoneNumber: ', 'Email: ']
-        menu_height = 10
+        menu_height = 9
         curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_BLACK)
         available_height = h - menu_height
         num_items = len(content) + 1
