@@ -61,7 +61,7 @@ class TeacherMenuView(View):
         h, w = stdscr.getmaxyx()
         menu_height = 9
         current_row = 0
-        content = ['Update details [U]','Add consultation day [A]','Check consultation request [C]', 'Log out [L]']
+        content = ['Add consultation day [A]','Check consultation request [C]','Update details [U]', 'Log out [L]']
         self._content(stdscr, current_row, content)
         while 1:
             key = stdscr.getch()

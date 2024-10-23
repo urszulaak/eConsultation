@@ -10,6 +10,28 @@ class HomeView(View):
         super().__init__()
         self.homeController = controller
 
+    def draw_rounded_box(win, y, x, height, width):
+        # Zdefiniuj znaki dla zaokrąglonych rogów i krawędzi
+        win.addch(y, x, curses.ACS_ULCORNER)  # Lewy górny róg
+        win.addch(y, x + width - 1, curses.ACS_URCORNER)  # Prawy górny róg
+        win.addch(y + height - 1, x, curses.ACS_LLCORNER)  # Lewy dolny róg
+        win.addch(y + height - 1, x + width - 1, curses.ACS_LRCORNER)  # Prawy dolny róg
+
+        # Rysuj górną i dolną krawędź
+        for i in range(1, width - 1):
+            win.addch(y, x + i, curses.ACS_HLINE)  # Górna krawędź
+            win.addch(y + height - 1, x + i, curses.ACS_HLINE)  # Dolna krawędź
+
+        # Rysuj lewą i prawą krawędź
+        for i in range(1, height - 1):
+            win.addch(y + i, x, curses.ACS_VLINE)  # Lewa krawędź
+            win.addch(y + i, x + width - 1, curses.ACS_VLINE)  # Prawa krawędź
+
+        # Wypełnij wnętrze (opcjonalnie)
+        for i in range(1, height - 1):
+            for j in range(1, width - 1):
+                win.addch(y + i, x + j, ' ')
+
     def _menuBar(self, stdscr):
         ascii_art = """
      _ _

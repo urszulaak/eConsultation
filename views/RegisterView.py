@@ -17,11 +17,11 @@ class RegisterView(View):
         stdscr.encoding = 'utf-8'
         os.environ['PYTHONIOENCODING'] = 'utf-8'
         h, w = stdscr.getmaxyx()
-        content = ['Type of acc [t/s]*: ','FirstName*: ', 'LastName*: ', 'Login*: ', 'Password*: ', 'PhoneNumber: ', 'Email: ']
+        content = ['Type of acc [t/s]: ','FirstName: ', 'LastName: ', 'Login: ', 'Password: ']
         menu_height = 9
         curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_BLACK)
         available_height = h - menu_height
-        num_items = len(content) + 1
+        num_items = len(content)
         box_height = available_height // num_items
         fields = []
         for id, row in enumerate(content):

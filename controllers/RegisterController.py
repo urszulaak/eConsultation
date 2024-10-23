@@ -10,7 +10,7 @@ class RegisterController(Controller):
 
     def _add(self, fields):
         response = self.usersModel._add(fields)
-        if response > 0:
+        if response != 0:
             print("Successfully added!")
         else:
             print("Error while adding")

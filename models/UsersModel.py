@@ -21,8 +21,8 @@ class UsersModel():
         response = 0
         try:
             self.c.execute(
-                "INSERT INTO users (LastName, FirstName, Login, Password, PhoneNumber, Email) VALUES (%s, %s, %s, %s, %s, %s)",
-                (fields[1], fields[2], fields[3], fields[4], fields[5], fields[6])
+                "INSERT INTO users (LastName, FirstName, Login, Password) VALUES (%s, %s, %s, %s)",
+                (fields[1], fields[2], fields[3], fields[4])
             )
             self.db.commit()
             response = self.c.rowcount
