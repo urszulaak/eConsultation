@@ -69,3 +69,18 @@ class UsersModel():
             pass
 
         return response
+
+    def _days(self, i):
+        response = 0
+        result = None
+        try:
+            self.c.execute("SELECT Day FROM days WHERE ID = %s", (i,))
+            result = self.c.fetchone()
+            if result:
+                response = result[0]
+            else:
+                response = 0
+        except:
+            pass
+
+        return response

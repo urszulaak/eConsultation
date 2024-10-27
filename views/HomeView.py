@@ -10,28 +10,6 @@ class HomeView(View):
         super().__init__()
         self.homeController = controller
 
-    def draw_rounded_box(win, y, x, height, width):
-        # Zdefiniuj znaki dla zaokrąglonych rogów i krawędzi
-        win.addch(y, x, curses.ACS_ULCORNER)  # Lewy górny róg
-        win.addch(y, x + width - 1, curses.ACS_URCORNER)  # Prawy górny róg
-        win.addch(y + height - 1, x, curses.ACS_LLCORNER)  # Lewy dolny róg
-        win.addch(y + height - 1, x + width - 1, curses.ACS_LRCORNER)  # Prawy dolny róg
-
-        # Rysuj górną i dolną krawędź
-        for i in range(1, width - 1):
-            win.addch(y, x + i, curses.ACS_HLINE)  # Górna krawędź
-            win.addch(y + height - 1, x + i, curses.ACS_HLINE)  # Dolna krawędź
-
-        # Rysuj lewą i prawą krawędź
-        for i in range(1, height - 1):
-            win.addch(y + i, x, curses.ACS_VLINE)  # Lewa krawędź
-            win.addch(y + i, x + width - 1, curses.ACS_VLINE)  # Prawa krawędź
-
-        # Wypełnij wnętrze (opcjonalnie)
-        for i in range(1, height - 1):
-            for j in range(1, width - 1):
-                win.addch(y + i, x + j, ' ')
-
     def _menuBar(self, stdscr):
         ascii_art = """
      _ _
@@ -43,41 +21,48 @@ class HomeView(View):
 | |!| | |   \\ \\
 """
         text = """
-       _____                      _ _        _   _             
-      / ____|                    | | |      | | (_)            
-  ___| |     ___  _ __  ___ _   _| | |_ __ _| |_ _  ___  _ __  
- / _ \\ |    / _ \\| '_ \\/ __| | | | | __/ _` | __| |/ _ \\| '_ \\ 
-|  __/ |___| (_) | | | \\__ \\ |_| | | || (_| | |_| | (_) | | | |
- \\___|\\_____\\___/|_| |_|___/\\__,_|_|\\__\\__,_|\\__|_|\\___/|_| |_|
+
+███████╗ ██████╗ ██████╗ ███╗   ██╗███████╗██╗   ██╗██╗  ████████╗ █████╗ ████████╗██╗ ██████╗ ███╗   ██╗
+██╔════╝██╔════╝██╔═══██╗████╗  ██║██╔════╝██║   ██║██║  ╚══██╔══╝██╔══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║
+█████╗  ██║     ██║   ██║██╔██╗ ██║███████╗██║   ██║██║     ██║   ███████║   ██║   ██║██║   ██║██╔██╗ ██║
+██╔══╝  ██║     ██║   ██║██║╚██╗██║╚════██║██║   ██║██║     ██║   ██╔══██║   ██║   ██║██║   ██║██║╚██╗██║
+███████╗╚██████╗╚██████╔╝██║ ╚████║███████║╚██████╔╝███████╗██║   ██║  ██║   ██║   ██║╚██████╔╝██║ ╚████║
+╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝ ╚═════╝ ╚══════╝╚═╝   ╚═╝  ╚═╝   ╚═╝   ╚═╝ ╚═════╝ ╚═╝  ╚═══╝
+                                                                                                         
+
 """
 
         stdscr.clear()
         curses.curs_set(0)
         h, w = stdscr.getmaxyx()
-        curses.init_pair(1, curses.COLOR_RED, curses.COLOR_RED)
+        curses.init_pair(1, curses.COLOR_BLUE, curses.COLOR_BLUE)
+        curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_BLUE)
+        curses.init_pair(3, curses.COLOR_CYAN, curses.COLOR_BLACK)
 
         ascii_lines = ascii_art.splitlines()
         text_lines = text.splitlines()
         max_ascii_width = max(len(line) for line in ascii_lines)
         max_text_width = max(len(line) for line in text_lines)
-        menu_height = 0
+        menu_height = -1
 
-        for i, line in enumerate(ascii_lines):
-            stdscr.addstr(0 + i, 0, line)
+        # for i, line in enumerate(ascii_lines):
+        #     stdscr.addstr(0 + i, 0, line)
 
         text_x = w // 2 - max_text_width // 2
         for i, line in enumerate(text_lines):
+            stdscr.attron(curses.color_pair(3))
             stdscr.addstr(0 + i, text_x, line)
+            stdscr.attroff(curses.color_pair(3))
+            menu_height += 1
 
-        right_ascii_x = w - max_ascii_width
-        for i, line in enumerate(ascii_lines):
-            stdscr.addstr(0 + i, right_ascii_x, line)
-            menu_height +=1
+        # right_ascii_x = max_text_width
+        # for i, line in enumerate(ascii_lines):
+        #     stdscr.addstr(0 + i, right_ascii_x, line)
+        #     menu_height +=1
 
         stdscr.attron(curses.color_pair(1))
         stdscr.hline(menu_height , 0, ' ', w)
         stdscr.attroff(curses.color_pair(1))
-        stdscr.border()
         stdscr.refresh()
         self._move(stdscr, h, w, menu_height)
 
@@ -86,7 +71,6 @@ class HomeView(View):
         
         menu_height += 1
 
-        curses.init_pair(2, curses.COLOR_RED, curses.COLOR_WHITE)
         num_items = len(content)
         
         available_height = h - menu_height
@@ -100,7 +84,10 @@ class HomeView(View):
             y = menu_height + id * box_height
 
             win = curses.newwin(box_height, box_width, y, x)
+
+            win.attron(curses.color_pair(3))
             win.box()
+            win.attroff(curses.color_pair(3))
 
 
             text_x = (box_width - len(row)) // 2
@@ -121,17 +108,16 @@ class HomeView(View):
 
     def _clearContent(self, stdscr, h, w, menu_height):
         start_y = menu_height + 1
-        end_y = h - 1
+        end_y = h
 
         for i in range(start_y, end_y):
             stdscr.move(i, 1)
             stdscr.clrtoeol()
-        stdscr.border()
         stdscr.refresh()
 
     def _move(self, stdscr, h, w, menu_height):
         current_row = 0
-        content = ['Login [L]', 'Register [R]', 'Information [I]', 'Graphic version [G]', 'Exit [E]']
+        content = ['Login [L]', 'Register [R]', 'Information [I]', 'Graphic version [G]', 'Exit [ctrl + E]']
         self._content(stdscr, current_row, h, w, content, menu_height)
         while 1:
             key = stdscr.getch()
@@ -142,7 +128,7 @@ class HomeView(View):
             elif key == curses.KEY_ENTER or key in [10, 13]:
                 self._clearContent(stdscr, h, w, menu_height)
                 self.homeController._menuChoice(current_row)
-            elif key in [ord('l'), ord('r'), ord('i'), ord('g'), ord('e')]:
+            elif key in [ord('l'), ord('r'), ord('i'), ord('g')]:
                 if key == ord('l'):
                     current_row = 0
                 elif key == ord('r'):
@@ -151,8 +137,10 @@ class HomeView(View):
                     current_row = 2
                 elif key == ord('g'):
                     current_row = 3
-                elif key == ord('e'):
-                    current_row = 4
+                self._clearContent(stdscr, h, w, menu_height)
+                self.homeController._menuChoice(current_row)
+            elif key == 5:
+                current_row = 4
                 self._clearContent(stdscr, h, w, menu_height)
                 self.homeController._menuChoice(current_row)
             

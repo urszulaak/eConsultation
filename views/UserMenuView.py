@@ -15,11 +15,12 @@ class UserMenuView(View):
     def _content(self, stdscr, current_row, content):
         curses.curs_set(0)
         h, w = stdscr.getmaxyx()
-        menu_height = 9
+        menu_height = 10
         locale.setlocale(locale.LC_ALL, '')
         stdscr.encoding = 'utf-8'
         os.environ['PYTHONIOENCODING'] = 'utf-8'
-        curses.init_pair(1, curses.COLOR_RED, curses.COLOR_WHITE)
+        curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLUE)
+        curses.init_pair(2, curses.COLOR_CYAN, curses.COLOR_BLACK)
         num_items = len(content)
 
         available_height = h - menu_height - 1
@@ -33,7 +34,9 @@ class UserMenuView(View):
             y = menu_height + id * box_height
 
             win = curses.newwin(box_height, box_width, y, x)
+            win.attron(curses.color_pair(2))
             win.box()
+            win.attroff(curses.color_pair(2))
 
             text_x = (box_width - len(row)) // 2
             text_y = box_height // 2
@@ -49,12 +52,11 @@ class UserMenuView(View):
 
     def _clearContent(self, stdscr, h, w, menu_height):
         start_y = menu_height + 1
-        end_y = h - 1
+        end_y = h
 
         for i in range(start_y, end_y):
             stdscr.move(i, 1)
             stdscr.clrtoeol()
-        stdscr.border()
         stdscr.refresh()
 
     def _move(self, stdscr):

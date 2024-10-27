@@ -10,7 +10,7 @@ class TeacherMenuController(Controller):
 
     def _menuChoice(self, current_row):
         if current_row == 0:
-            Core.openController("login").main()
+            Core.openController("addDays").main()
         elif current_row == 1:
             Core.openController("register").main()
         elif current_row == 2:

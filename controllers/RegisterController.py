@@ -16,7 +16,7 @@ class RegisterController(Controller):
             print("Error while adding")
 
     def _added(self):
-        pass
+        Core.openController("login").main()
         
     def main(self):
         self.registerView.main()

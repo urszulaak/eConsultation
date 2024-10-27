@@ -21,6 +21,9 @@ class LoginController(Controller):
             Core.openController("teacherMenu",response).main()
         else:
             self._logged(fields)
+
+    def _home(self):
+        Core.openController("Home").main()
         
     def main(self):
         self.loginView.main()
