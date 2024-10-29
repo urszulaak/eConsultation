@@ -8,6 +8,7 @@ class AddDaysView(View):
     def __init__(self, controller,response=None):
         super().__init__()
         self.addDaysController = controller
+        self.response = response
 
     def _content(self, stdscr, current_day, days):
         curses.curs_set(0)
@@ -21,7 +22,7 @@ class AddDaysView(View):
         curses.init_pair(6, curses.COLOR_GREEN, curses.COLOR_BLACK)
         curses.init_pair(7, curses.COLOR_WHITE, curses.COLOR_GREEN)
         available_height = h - menu_height - 1
-        line = "Choose day"
+        line = "Choose day [ctrl + E to save and exit]"
         stdscr.attron(curses.color_pair(3))
         stdscr.addstr(menu_height + 1, w // 2 - (len(line) // 2), line)
         stdscr.attroff(curses.color_pair(3))
@@ -50,6 +51,10 @@ class AddDaysView(View):
         menu_height = 16
         available_height = h - menu_height - 1
         available_width = w // 7
+        line = "Choose time stamps [S - save, C - cancel]"
+        stdscr.attron(curses.color_pair(3))
+        stdscr.addstr(menu_height + 1, w // 2 - (len(line) // 2), line)
+        stdscr.attroff(curses.color_pair(3))
         id=0
         for i, stamp in enumerate(time_stamps):
             if i == 7:
@@ -107,7 +112,7 @@ class AddDaysView(View):
                 current_stamp -= 1
             elif key == curses.KEY_RIGHT and current_stamp < len(time_stamps) - 1:
                 current_stamp += 1
-            elif key == curses.KEY_UP and current_stamp < len(time_stamps)and current_stamp > 6:
+            elif key == curses.KEY_UP and len(time_stamps) > current_stamp > 6:
                 current_stamp -= 7
             elif key == curses.KEY_DOWN and current_stamp < len(time_stamps) - 1 and current_stamp < 7:
                 current_stamp += 7
@@ -116,6 +121,11 @@ class AddDaysView(View):
                 selected.remove(current_stamp)
             elif key == curses.KEY_ENTER or key in [10, 13]:
                 selected.append(current_stamp)
+            elif key in [ord('s'), ord('c')]:
+                if key == ord('s'):
+                    self.addDaysController._saveTimeStamps(selected,current_day,self.response)
+                elif key == ord('c'):
+                    current_row = 1
             self._timeStamps(stdscr, current_stamp, time_stamps, selected)
 
     def main(self):

@@ -6,9 +6,10 @@ from models.TimeStampsModel import TimeStampsModel
 class AddDaysController(Controller):
 
     def __init__(self,response=None):
-        self.addDaysView = self.loadView("addDays")
+        self.addDaysView = self.loadView("addDays", response)
         self.daysModel = DaysModel()
         self.timeStampsModel = TimeStampsModel()
+        self.response = response
 
     def _getDays(self):
         days = []
@@ -23,6 +24,14 @@ class AddDaysController(Controller):
             response = self.timeStampsModel._timeStamps(i)
             timeStamps.append(response)
         return timeStamps
+
+    def _saveTimeStamps(self, selected, current_day, user):
+        for select in selected:
+            response = self.timeStampsModel._saveTime(select, current_day, user)
+            if response != 0:
+                print("Successfully added!")
+            else:
+                print("Error while adding")
 
     def main(self):
         self.addDaysView.main()

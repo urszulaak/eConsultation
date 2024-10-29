@@ -28,5 +28,16 @@ class TimeStampsModel():
                 response = 0
         except:
             pass
-
         return response
+
+    def _saveTime(self, select, current_day, user):
+        response = 0
+        try:
+            self.c.execute(
+                "INSERT INTO teachers_days_time (ID_teachers, ID_days, ID_time) VALUES (%s, %s, %s)",
+                (user,current_day+1,select+1,)
+            )
+            self.db.commit()
+            response = self.c.rowcount
+        except:
+            pass

@@ -22,7 +22,6 @@ class TeacherMenuView(View):
         curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLUE)
         curses.init_pair(2, curses.COLOR_CYAN, curses.COLOR_BLACK)
         num_items = len(content)
-        
         available_height = h - menu_height - 1
         
         box_height = available_height // num_items
@@ -73,7 +72,7 @@ class TeacherMenuView(View):
                 current_row += 1
             elif key == curses.KEY_ENTER or key in [10, 13]:
                 self._clearContent(stdscr, h, w, menu_height)
-                self.teacherMenuController._menuChoice(current_row)
+                self.teacherMenuController._menuChoice(current_row,self.response)
             elif key in [ord('a'), ord('c'), ord('u'), ord('l')]:
                 if key == ord('a'):
                     current_row = 0
@@ -85,7 +84,7 @@ class TeacherMenuView(View):
                     current_row = 3
                 self._clearContent(stdscr, h, w, menu_height)
                 stdscr.refresh()
-                self.teacherMenuController._menuChoice(current_row)
+                self.teacherMenuController._menuChoice(current_row,self.response)
             
             self._content(stdscr, current_row, content)
 

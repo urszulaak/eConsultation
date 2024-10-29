@@ -26,15 +26,17 @@ class RegisterView(View):
         curses.init_pair(4, curses.COLOR_RED, curses.COLOR_RED)
         curses.init_pair(5, curses.COLOR_GREEN, curses.COLOR_GREEN)
 
-        available_height = h - menu_height
+        available_height = h - menu_height - 1
         num_items = len(content)
         box_height = available_height // num_items
         fields = []
+        y = 0
+
         for id, row in enumerate(content):
             x = 1
             y = menu_height + id * box_height
+
             win = curses.newwin(3, w - 4, y, x)
-            win_text = curses.newwin(1, w - 4, y+3, x+2)
             text_x = 2
             text_y = 1
             win.attron(curses.color_pair(3))
@@ -42,13 +44,12 @@ class RegisterView(View):
             win.attroff(curses.color_pair(3))
             win.refresh()
 
+            win_text = curses.newwin(1, w - len(row) - 6, y + 1, x + len(row) + 2)
             box = Textbox(win_text)
             win_text.refresh()
 
-            stdscr.hline(y + 4, x + 2, curses.ACS_HLINE, w - 8)
+            #stdscr.hline(y + 2, x + len(row) + 1, curses.ACS_HLINE, w - len(row))
             stdscr.refresh()
-
-            input_text = ""
             while True:
                 input_text = box.edit()
                 win_text.refresh()
