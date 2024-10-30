@@ -33,5 +33,8 @@ class AddDaysController(Controller):
             else:
                 print("Error while adding")
 
+    def _teacherHome(self):
+        Core.openController("teacherMenu", self.response).main()
+
     def main(self):
         self.addDaysView.main()

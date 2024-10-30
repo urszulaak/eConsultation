@@ -18,7 +18,6 @@ class TimeStampsModel():
 
     def _timeStamps(self, i):
         response = 0
-        result = None
         try:
             self.c.execute("SELECT Stamp FROM time_stamps WHERE ID = %s", (i,))
             result = self.c.fetchone()
@@ -31,13 +30,64 @@ class TimeStampsModel():
         return response
 
     def _saveTime(self, select, current_day, user):
-        response = 0
         try:
             self.c.execute(
                 "INSERT INTO teachers_days_time (ID_teachers, ID_days, ID_time) VALUES (%s, %s, %s)",
                 (user,current_day+1,select+1,)
             )
             self.db.commit()
-            response = self.c.rowcount
         except:
             pass
+
+    def _countTeachers(self):
+        response = 0
+        try:
+            self.c.execute("SELECT COUNT(DISTINCT ID_teachers) FROM teachers_days_time")
+            result = self.c.fetchone()
+            response = result[0]
+
+        except:
+            pass
+        return response
+
+    def _teachersID(self):
+        unique_ids = []
+        try:
+            self.c.execute("SELECT DISTINCT ID_teachers FROM teachers_days_time")
+            results = self.c.fetchall()
+            unique_ids = [row[0] for row in results]
+        except:
+            pass
+        return unique_ids
+
+    def _teachers(self, i):
+        response = 0
+        try:
+            self.c.execute("SELECT FirstName, LastName FROM users WHERE ID = %s", (i,))
+            result = self.c.fetchone()
+            response = f"{result[0]} {result[1]}"
+        except:
+            pass
+        return response
+
+    def _daysID(self,current_teacher):
+        unique_ids = []
+        try:
+            self.c.execute("SELECT DISTINCT ID_days FROM teachers_days_time WHERE Id_teachers = %s",
+                           (current_teacher,)
+            )
+            results = self.c.fetchall()
+            unique_ids = [row[0] for row in results]
+        except:
+            pass
+        return unique_ids
+
+    def _days(self, i):
+        response = 0
+        try:
+            self.c.execute("SELECT FirstName, LastName FROM users WHERE ID = %s", (i,))
+            result = self.c.fetchone()
+            response = f"{result[0]} {result[1]}"
+        except:
+            pass
+        return response

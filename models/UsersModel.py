@@ -18,20 +18,17 @@ class UsersModel():
 
 
     def _add(self, fields):
-        response = 0
         try:
             self.c.execute(
                 "INSERT INTO users (LastName, FirstName, Login, Password) VALUES (%s, %s, %s, %s)",
                 (fields[1], fields[2], fields[3], fields[4])
             )
             self.db.commit()
-            response = self.c.rowcount
             if(fields[0] == 't'):
                 self.c.execute(
                 "INSERT INTO teachers (ID) SELECT MAX(ID) FROM users"
                 )
             self.db.commit()
-            response = self.c.rowcount
         except:
             pass
 
