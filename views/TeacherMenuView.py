@@ -62,7 +62,7 @@ class TeacherMenuView(View):
         h, w = stdscr.getmaxyx()
         menu_height = 9
         current_row = 0
-        content = ['Add consultation days [A]','Check consultation request [C]','Update details [U]', 'Log out [L]']
+        content = ['Add consultation days [A]','Check consultation request [C]','Update details [U]', 'Log out [ctrl + E]']
         self._content(stdscr, current_row, content)
         while 1:
             key = stdscr.getch()
@@ -73,15 +73,18 @@ class TeacherMenuView(View):
             elif key == curses.KEY_ENTER or key in [10, 13]:
                 self._clearContent(stdscr, h, w, menu_height)
                 self.teacherMenuController._menuChoice(current_row,self.response)
-            elif key in [ord('a'), ord('c'), ord('u'), ord('l')]:
+            elif key == 5:
+                current_row = 3
+                self._clearContent(stdscr, h, w, menu_height)
+                stdscr.refresh()
+                self.teacherMenuController._menuChoice(current_row,self.response)
+            elif key in [ord('a'), ord('c'), ord('u')]:
                 if key == ord('a'):
                     current_row = 0
                 elif key == ord('c'):
                     current_row = 1
                 elif key == ord('u'):
                     current_row = 2
-                elif key == ord('l'):
-                    current_row = 3
                 self._clearContent(stdscr, h, w, menu_height)
                 stdscr.refresh()
                 self.teacherMenuController._menuChoice(current_row,self.response)

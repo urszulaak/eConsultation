@@ -73,7 +73,7 @@ class TimeStampsModel():
     def _daysID(self,current_teacher):
         unique_ids = []
         try:
-            self.c.execute("SELECT DISTINCT ID_days FROM teachers_days_time WHERE Id_teachers = %s",
+            self.c.execute("SELECT DISTINCT ID_days FROM teachers_days_time WHERE ID_teachers = %s",
                            (current_teacher,)
             )
             results = self.c.fetchall()
@@ -85,9 +85,9 @@ class TimeStampsModel():
     def _days(self, i):
         response = 0
         try:
-            self.c.execute("SELECT FirstName, LastName FROM users WHERE ID = %s", (i,))
+            self.c.execute("SELECT Day FROM days WHERE ID = %s", (i,))
             result = self.c.fetchone()
-            response = f"{result[0]} {result[1]}"
+            response = result[0]
         except:
             pass
         return response

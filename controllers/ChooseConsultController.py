@@ -28,13 +28,13 @@ class ChooseConsultController(Controller):
         daysID = self.timeStampsModel._daysID(current_teacher)
         return daysID
 
-    def _getDays(self):
-        teachers = []
-        teachersID = self._getTeachersID()
-        for i in teachersID:
-            response = self.timeStampsModel._teachers(i)
-            teachers.append(response)
-        return teachers
+    def _getDays(self, current_teacher):
+        days = []
+        daysID = self._getDaysID(current_teacher)
+        for i in daysID:
+            response = self.timeStampsModel._days(i)
+            days.append(response)
+        return days
 
     def _userHome(self):
         Core.openController("userMenu", self.response).main()

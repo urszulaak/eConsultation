@@ -63,7 +63,7 @@ class UserMenuView(View):
         h, w = stdscr.getmaxyx()
         menu_height = 9
         current_row = 0
-        content = ['Book consultation [B]', 'Check consultations status [C]', 'Update details [U]', 'Log out [L]']
+        content = ['Book consultation [B]', 'Check consultations status [C]', 'Update details [U]', 'Log out [ctrl + E]']
         self._content(stdscr, current_row, content)
         while 1:
             key = stdscr.getch()
@@ -74,15 +74,18 @@ class UserMenuView(View):
             elif key == curses.KEY_ENTER or key in [10, 13]:
                 self._clearContent(stdscr, h, w, menu_height)
                 self.userMenuController._menuChoice(current_row)
-            elif key in [ord('b'), ord('c'), ord('u'), ord('l')]:
+            elif key == 5:
+                current_row = 3
+                self._clearContent(stdscr, h, w, menu_height)
+                stdscr.refresh()
+                self.userMenuController._menuChoice(current_row)
+            elif key in [ord('b'), ord('c'), ord('u')]:
                 if key == ord('b'):
                     current_row = 0
                 elif key == ord('c'):
                     current_row = 1
                 elif key == ord('u'):
                     current_row = 2
-                elif key == ord('l'):
-                    current_row = 3
                 self._clearContent(stdscr, h, w, menu_height)
                 self.userMenuController._menuChoice(current_row)
 

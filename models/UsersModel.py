@@ -20,7 +20,7 @@ class UsersModel():
     def _add(self, fields):
         try:
             self.c.execute(
-                "INSERT INTO users (LastName, FirstName, Login, Password) VALUES (%s, %s, %s, %s)",
+                "INSERT INTO users (FirstName, LastName, Login, Password) VALUES (%s, %s, %s, %s)",
                 (fields[1], fields[2], fields[3], fields[4])
             )
             self.db.commit()
