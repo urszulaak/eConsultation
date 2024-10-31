@@ -28,13 +28,20 @@ class ChooseConsultController(Controller):
         daysID = self.timeStampsModel._daysID(current_teacher)
         return daysID
 
-    def _getDays(self, current_teacher):
-        days = []
-        daysID = self._getDaysID(current_teacher)
-        for i in daysID:
-            response = self.timeStampsModel._days(i)
-            days.append(response)
-        return days
+    def _getStampsID(self, current_teacher, selected_day):
+        stampsID = self.timeStampsModel._stampsID(current_teacher, selected_day)
+        return stampsID
+
+    def _getStamps(self, current_teacher, selected_day):
+        stamps = []
+        stampsID = self._getStampsID(current_teacher, selected_day)
+        for i in stampsID:
+            response = self.timeStampsModel._stamps(i)
+            stamps.append(response)
+        return stamps
+
+    def _form(self, current_teacher, selected_date, current_stamp):
+        pass
 
     def _userHome(self):
         Core.openController("userMenu", self.response).main()

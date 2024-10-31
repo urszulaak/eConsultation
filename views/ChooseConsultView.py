@@ -32,29 +32,34 @@ class ChooseConsultView(View):
         stdscr.attron(curses.color_pair(3))
         stdscr.addstr(menu_height + 1, w // 2 - (len(line) // 2), line)
         available_width = w // len(teachers)
-        for i, day in enumerate(teachers):
+        for i, teacher in enumerate(teachers):
             x_position = available_width * i
             win_day = curses.newwin(5, available_width, menu_height+2, x_position)
             win_day.attron(curses.color_pair(3))
             win_day.box()
             win_day.attroff(curses.color_pair(3))
-            text = str(day)
+            text = str(teacher)
             text_x = (available_width - len(text)) // 2
             text_y = 5 // 2
             if i == current_teacher:
                 win_day.attron(curses.color_pair(5))
-                win_day.addstr(text_y, text_x, str(day))
+                win_day.addstr(text_y, text_x, str(teacher))
                 win_day.attroff(curses.color_pair(5))
             else:
-                win_day.addstr(text_y, text_x, str(day))
+                win_day.addstr(text_y, text_x, str(teacher))
             win_day.refresh()
         stdscr.attroff(curses.color_pair(3))
 
-    def draw_calendar(self, stdscr, year, month, daysID):
+    def draw_calendar(self, stdscr, year, month, daysID, selected_day=None, selected_week=None):
         h, w = stdscr.getmaxyx()
         menu_height = 18
+        line = "Choose available month and [Enter - select month/day, C - cancel]"
         self._clearPart(stdscr)
-        title = f"{calendar.month_name[month]} {year}"
+        stdscr.attron(curses.color_pair(3))
+        stdscr.addstr(menu_height, w // 2 - (len(line) // 2), line)
+        stdscr.attroff(curses.color_pair(3))
+        menu_height = 20
+        title = f"\u2B9C {calendar.month_name[month]} {year} \u2B9E"
         stdscr.addstr(menu_height, w//2 - (len(title) // 2), title)
 
         days = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
@@ -63,22 +68,53 @@ class ChooseConsultView(View):
             stdscr.addstr(menu_height+2, (w//2-15)+ i * 4 + 2, day)
             stdscr.attroff(curses.color_pair(3))
 
-
         cal = calendar.monthcalendar(year, month)
         start_y = 1
-        for week in cal:
-            for i, day in enumerate(week):
+        for week_idx, week in enumerate(cal):
+            for day_idx, day in enumerate(week):
                 if day == 0:
                     continue
-                if i in daysID:
-                    stdscr.attron(curses.color_pair(6))
-                    stdscr.addstr(menu_height + 2 + start_y, (w // 2 - 15) + i * 4 + 2, str(day).rjust(2))
-                    stdscr.attroff(curses.color_pair(6))
-                else:
-                    stdscr.addstr(menu_height+2+start_y, (w//2-15)+ i * 4 + 2, str(day).rjust(2))
-            start_y += 1
+                color = curses.color_pair(6) if day_idx in daysID else curses.color_pair(0)
 
+                if selected_day == day_idx and selected_week == week_idx:
+                    stdscr.attron(curses.color_pair(5) | curses.A_BOLD)
+                    if day_idx in daysID:
+                        stdscr.attron(curses.color_pair(7) | curses.A_BOLD)
+                else:
+                    stdscr.attron(color)
+
+                stdscr.addstr(menu_height + 2 + start_y, (w // 2 - 15) + day_idx * 4 + 2, str(day).rjust(2))
+                stdscr.attroff(curses.color_pair(6) | curses.color_pair(5) | curses.color_pair(7) | curses.A_BOLD)
+
+            start_y += 1
         stdscr.refresh()
+
+    def _stamps(self, stdscr, stamps, current_stamp):
+        h, w = stdscr.getmaxyx()
+        menu_height = 28
+
+        available_height = h - menu_height - 1
+        line = "Choose available teacher [ctrl + E - exit]"
+        stdscr.attron(curses.color_pair(3))
+        stdscr.addstr(menu_height + 1, w // 2 - (len(line) // 2), line)
+        available_width = w // len(stamps)
+        for i, stamp in enumerate(stamps):
+            x_position = available_width * i
+            win_day = curses.newwin(5, available_width, menu_height + 2, x_position)
+            win_day.attron(curses.color_pair(3))
+            win_day.box()
+            win_day.attroff(curses.color_pair(3))
+            text = str(stamp)
+            text_x = (available_width - len(text)) // 2
+            text_y = 5 // 2
+            if i == current_stamp:
+                win_day.attron(curses.color_pair(5))
+                win_day.addstr(text_y, text_x, str(stamp))
+                win_day.attroff(curses.color_pair(5))
+            else:
+                win_day.addstr(text_y, text_x, str(stamp))
+            win_day.refresh()
+        stdscr.attroff(curses.color_pair(3))
 
     def _moveTeacher(self, stdscr):
         current_teacher = 0
@@ -105,7 +141,7 @@ class ChooseConsultView(View):
         current_date = datetime.now()
         year, month = current_date.year, current_date.month
         while 1:
-            self.draw_calendar(stdscr, year, month, daysID)
+            self.draw_calendar(stdscr, year, month, daysID, current_teacher)
             key = stdscr.getch()
             if key == curses.KEY_RIGHT:
                 month += 1
@@ -120,6 +156,56 @@ class ChooseConsultView(View):
             elif key == ord("c"):
                 self._clearPart(stdscr)
                 self._moveTeacher(stdscr)
+            elif key == curses.KEY_ENTER or key in [10, 13]:
+                self._navigate_days(stdscr, year, month, daysID, current_teacher)
+
+    def _navigate_days(self, stdscr, year, month, daysID, current_teacher):
+        selected_day = 0
+        selected_week = 0
+        selected_date = None
+
+        while True:
+            self.draw_calendar(stdscr, year, month, daysID, selected_day, selected_week)
+            key = stdscr.getch()
+
+            cal = calendar.monthcalendar(year, month)
+            if key == curses.KEY_RIGHT:
+                selected_day = (selected_day + 1) % 7
+            elif key == curses.KEY_LEFT:
+                selected_day = (selected_day - 1) % 7
+            elif key == curses.KEY_DOWN:
+                selected_week = (selected_week + 1) % len(cal)
+            elif key == curses.KEY_UP:
+                selected_week = (selected_week - 1) % len(cal)
+            elif key == curses.KEY_ENTER or key in [10, 13]:
+                day = cal[selected_week][selected_day]
+                if selected_day not in daysID:
+                    pass
+                    #wyswietl komunikat brak konsultacji w danym dniu i wróć do wyboru dnia
+                elif day != 0:
+                    selected_date = f"{year}-{month:02}-{day:02}"
+                    self._moveStamps(stdscr, year, month, daysID, current_teacher, selected_date, selected_day)
+            elif key == ord("c"):
+                self._moveCalendar(stdscr, current_teacher)
+                return
+
+    def _moveStamps(self, stdscr, year, month, daysID, current_teacher, selected_date, selected_day):
+        current_stamp = 0
+        stampsID = self.chooseConsultController._getStampsID(current_teacher, selected_day)
+        stamps = self.chooseConsultController._getStamps(current_teacher, selected_day)
+        self._stamps(stdscr, stamps, current_stamp)
+        while 1:
+            key = stdscr.getch()
+            if key == (curses.KEY_LEFT) and current_stamp > 0:
+                current_stamp -= 1
+            elif key == curses.KEY_RIGHT and current_stamp < len(stamps) - 1:
+                current_stamp += 1
+            elif key == curses.KEY_ENTER or key in [10, 13]:
+                current_stamp = stampsID[current_stamp]
+                self.chooseConsultController._form(current_teacher, selected_date, current_stamp)
+            elif key == ord("c"):
+                self._navigate_days(stdscr, year, month, daysID, current_teacher)
+            self._stamps(stdscr, stamps, current_stamp)
 
     def _clearPart(self, stdscr):
         h, w = stdscr.getmaxyx()

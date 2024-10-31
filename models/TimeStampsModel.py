@@ -82,12 +82,25 @@ class TimeStampsModel():
             pass
         return unique_ids
 
-    def _days(self, i):
+    def _stampsID(self, current_teacher, day):
+        unique_ids = []
+        try:
+            self.c.execute("SELECT ID_time FROM teachers_days_time WHERE ID_teachers = %s && ID_days = %s",
+                           (current_teacher,day,)
+                           )
+            results = self.c.fetchall()
+            unique_ids = [row[0] for row in results]
+        except:
+            pass
+        return unique_ids
+
+    def _stamps(self, i):
         response = 0
         try:
-            self.c.execute("SELECT Day FROM days WHERE ID = %s", (i,))
+            self.c.execute("SELECT Stamp FROM time_stamps WHERE ID = %s", (i,))
             result = self.c.fetchone()
             response = result[0]
         except:
             pass
         return response
+
