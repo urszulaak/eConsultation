@@ -4,6 +4,7 @@ from curses import wrapper
 import calendar
 from datetime import datetime
 from curses.textpad import Textbox, rectangle
+import time
 
 class ChooseConsultView(View):
 
@@ -26,6 +27,7 @@ class ChooseConsultView(View):
         curses.init_pair(5, curses.COLOR_WHITE, curses.COLOR_BLUE)
         curses.init_pair(6, curses.COLOR_GREEN, curses.COLOR_BLACK)
         curses.init_pair(7, curses.COLOR_WHITE, curses.COLOR_GREEN)
+        curses.init_pair(8, curses.COLOR_GREEN, curses.COLOR_GREEN)
         #curses.init_pair(8, 8, curses.COLOR_BLACK)
         available_height = h - menu_height - 1
         line = "Choose available teacher [ctrl + E - exit]"
@@ -116,6 +118,65 @@ class ChooseConsultView(View):
             win_day.refresh()
         stdscr.attroff(curses.color_pair(3))
 
+    def _form(self, stdscr):
+        h, w = stdscr.getmaxyx()
+        menu_height = 35
+        fields = []
+        content = ["Topic: ","Description: "]
+        box_height = (h - 28) // len(content)
+        for id, row in enumerate(content):
+            x = 1
+            y = menu_height + id * 2
+
+            win = curses.newwin(3, w - 4, y, x)
+            text_x = 2
+            text_y = 1
+            win.attron(curses.color_pair(3))
+            win.addstr(text_y, text_x, row)
+            win.attroff(curses.color_pair(3))
+            win.refresh()
+
+            win_text = curses.newwin(1, w - len(row) - 6, y + 1, x + len(row) + 2)
+            box = Textbox(win_text)
+            win_text.refresh()
+
+            stdscr.refresh()
+            while True:
+                input_text = box.edit()
+                win_text.refresh()
+                fields.append(input_text.strip())
+                break
+        return fields
+
+    def _success(self, stdscr):
+        print("qwewqew")
+        h, w = stdscr.getmaxyx()
+        win_shadow = curses.newwin(h // 3, w // 4, h // 2 - h // 6 + 1, w // 2 - w // 8 + 1)
+        win_shadow.attron(curses.color_pair(8))
+        win_shadow.box()
+        win_shadow.refresh()
+        win_shadow.attroff(curses.color_pair(8))
+        win_error = curses.newwin(h // 3, w // 4, h // 2 - h // 6, w // 2 - w // 8)
+        win_error.attron(curses.color_pair(1))
+        win_error.box()
+        win_error.refresh()
+        win_error.attroff(curses.color_pair(1))
+        no_user_found = "\u2705 SUCCESSFULLY BOOKED! \u2705"
+        no_user_found2 = "    SUCCESSFULLY BOOKED!    "
+        curses.curs_set(0)
+        stdscr.attron(curses.color_pair(6))
+        stdscr.addstr(h // 2, w // 2 - (len(no_user_found) // 2) - 1, no_user_found)
+        stdscr.refresh()
+        time.sleep(0.6)
+        stdscr.addstr(h // 2, w // 2 - (len(no_user_found2) // 2) - 1, no_user_found2)
+        stdscr.refresh()
+        time.sleep(0.6)
+        stdscr.addstr(h // 2, w // 2 - (len(no_user_found) // 2) - 1, no_user_found)
+        stdscr.refresh()
+        time.sleep(0.6)
+        stdscr.attroff(curses.color_pair(6))
+        stdscr.refresh()
+
     def _moveTeacher(self, stdscr):
         current_teacher = 0
         teachersID = self.chooseConsultController._getTeachersID()
@@ -191,8 +252,8 @@ class ChooseConsultView(View):
 
     def _moveStamps(self, stdscr, year, month, daysID, current_teacher, selected_date, selected_day):
         current_stamp = 0
-        stampsID = self.chooseConsultController._getStampsID(current_teacher, selected_day)
-        stamps = self.chooseConsultController._getStamps(current_teacher, selected_day)
+        stampsID = self.chooseConsultController.getStampsID(current_teacher, selected_day)
+        stamps = self.chooseConsultController.getStamps(current_teacher, selected_day)
         self._stamps(stdscr, stamps, current_stamp)
         while 1:
             key = stdscr.getch()
@@ -202,7 +263,10 @@ class ChooseConsultView(View):
                 current_stamp += 1
             elif key == curses.KEY_ENTER or key in [10, 13]:
                 current_stamp = stampsID[current_stamp]
-                self.chooseConsultController._form(current_teacher, selected_date, current_stamp)
+                form = self._form(stdscr)
+                if self.chooseConsultController.form(current_teacher, selected_date, current_stamp, form, self.response):
+                    print("Proba")
+                    self._success(stdscr)
             elif key == ord("c"):
                 self._navigate_days(stdscr, year, month, daysID, current_teacher)
             self._stamps(stdscr, stamps, current_stamp)

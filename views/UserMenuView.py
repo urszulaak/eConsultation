@@ -87,7 +87,7 @@ class UserMenuView(View):
                 elif key == ord('u'):
                     current_row = 2
                 self._clearContent(stdscr, h, w, menu_height)
-                self.userMenuController._menuChoice(current_row)
+                self.userMenuController._menuChoice(current_row, self.response)
 
             self._content(stdscr, current_row, content)
 

@@ -34,7 +34,7 @@ class RegisterView(View):
 
         for id, row in enumerate(content):
             x = 1
-            y = menu_height + id * box_height
+            y = menu_height + id * 2
 
             win = curses.newwin(3, w - 4, y, x)
             text_x = 2

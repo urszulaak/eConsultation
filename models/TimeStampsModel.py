@@ -104,3 +104,13 @@ class TimeStampsModel():
             pass
         return response
 
+    def addConsult(self, current_teacher, selected_date, current_stamp, form, user):
+        try:
+            self.c.execute(
+                "INSERT INTO consult (ID_teachers, ID_users, Title, Description, C_Date, ID_stamp) VALUES (%s, %s, %s, %s, %s, %s)",
+                (current_teacher, user, form[0], form[1], selected_date, current_stamp,)
+            )
+            self.db.commit()
+        except:
+            pass
+

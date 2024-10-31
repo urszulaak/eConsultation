@@ -28,7 +28,7 @@ class LoginView(View):
 
         for id, row in enumerate(content):
             x = 1
-            y = menu_height + id * box_height
+            y = menu_height + id * 2
 
             win = curses.newwin(3, w - 4, y, x)
             text_x = 2
@@ -42,7 +42,6 @@ class LoginView(View):
             box = Textbox(win_text)
             win_text.refresh()
 
-            #stdscr.hline(y + 2, x + len(row)+1, curses.ACS_HLINE, w-len(row))
             stdscr.refresh()
             while True:
                 input_text = box.edit()
