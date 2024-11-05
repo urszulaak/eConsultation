@@ -1,4 +1,5 @@
 import mysql.connector
+from datetime import datetime
 
 class TimeStampsModel():
 
@@ -113,4 +114,33 @@ class TimeStampsModel():
             self.db.commit()
         except:
             pass
+
+    def consults(self, current_teacher):
+        unique_ids = []
+        try:
+            # Aktualna data
+            today = datetime.today().date()
+
+            # Zapytanie do bazy danych, aby pobrać konsultacje dla nauczyciela, w podanym dniu, i przyszłych dat
+            self.c.execute("""
+            SELECT c.C_Date, u.LastName, u.FirstName, c.Title, c.Description, t.Stamp 
+            FROM consult AS c
+            JOIN users AS u ON c.ID_users = u.ID
+            JOIN time_stamps AS t ON c.ID_stamp = t.ID
+            WHERE c.ID_teachers = %s 
+            AND c.C_Date >= %s
+            ORDER BY c.C_Date ASC
+        """, (current_teacher, today))
+
+            # Pobranie wyników
+            results = self.c.fetchall()
+
+            # Formatowanie wyników w postaci elementów tablicy
+            for row in results:
+                consultation = f"Date: {row[0]} Hour: {row[5]} Student: {row[1]} {row[2]} Topic: {row[3]} Description: {row[4]}"
+                unique_ids.append([consultation])
+        except Exception as e:
+            print(f"Error: {e}")
+
+        return unique_ids
 

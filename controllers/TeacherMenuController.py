@@ -13,7 +13,7 @@ class TeacherMenuController(Controller):
         if current_row == 0:
             Core.openController("addDays",self.response).main()
         elif current_row == 1:
-            Core.openController("register").main()
+            Core.openController("checkConsult",self.response).main()
         elif current_row == 2:
             Core.openController("information").main()
         else:
