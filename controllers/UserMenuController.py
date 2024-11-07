@@ -13,7 +13,7 @@ class UserMenuController(Controller):
         if current_row == 0:
             Core.openController("chooseConsult",self.response).main()
         elif current_row == 1:
-            Core.openController("register").main()
+            Core.openController("checkUConsult",self.response).main()
         elif current_row == 2:
             Core.openController("information").main()
         else:

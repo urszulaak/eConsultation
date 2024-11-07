@@ -3,6 +3,7 @@ from core.Core import Core
 from models.DaysModel import DaysModel
 from models.TimeStampsModel import TimeStampsModel
 from models.UsersModel import UsersModel
+from models.ConsultModel import ConsultModel
 
 class ChooseConsultController(Controller):
 
@@ -10,6 +11,7 @@ class ChooseConsultController(Controller):
         self.chooseConsultView = self.loadView("chooseConsult", response)
         self.timeStampsModel = TimeStampsModel()
         self.usersModel = UsersModel()
+        self.consultModel = ConsultModel()
         self.response = response
 
     def _getTeachersID(self):
@@ -41,14 +43,14 @@ class ChooseConsultController(Controller):
         return stamps
 
     def form(self, current_teacher, selected_date, current_stamp, form, user):
-        response = self.timeStampsModel.addConsult(current_teacher, selected_date, current_stamp, form, user)
+        response = self.consultModel.addConsult(current_teacher, selected_date, current_stamp, form, user)
         if response != 0:
             print("Successfully added!")
         else:
             print("Error while adding")
         return response
 
-    def _userHome(self):
+    def userHome(self):
         Core.openController("userMenu", self.response).main()
 
     def main(self):

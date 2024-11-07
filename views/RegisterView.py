@@ -18,7 +18,7 @@ class RegisterView(View):
         stdscr.encoding = 'utf-8'
         os.environ['PYTHONIOENCODING'] = 'utf-8'
         h, w = stdscr.getmaxyx()
-        content = ['Type of acc [t/s]: ','FirstName: ', 'LastName: ', 'Login: ', 'Password: ']
+        content = ['Type of account [t/s]: ','FirstName: ', 'LastName: ', 'Login: ', 'Password: ']
         menu_height = 10
         curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
@@ -58,7 +58,8 @@ class RegisterView(View):
 
 
         self._clearContent(stdscr, h, w, menu_height)
-        self.registerController._add(fields)
+        if self.registerController.add(fields):
+            pass
         win_shadow = curses.newwin(h // 3, w // 4, h // 2 - h // 6 + 1, w // 2 - w // 8 + 1)
         win_shadow.attron(curses.color_pair(5))
         win_shadow.box()

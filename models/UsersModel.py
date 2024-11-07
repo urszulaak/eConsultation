@@ -17,20 +17,30 @@ class UsersModel():
         self.c = self.db.cursor()
 
 
-    def _add(self, fields):
+    def add(self, fields):
+        result = None
         try:
             self.c.execute(
-                "INSERT INTO users (FirstName, LastName, Login, Password) VALUES (%s, %s, %s, %s)",
-                (fields[1], fields[2], fields[3], fields[4])
+                "SELECT ID FROM users WHERE Login = %s",
+                (fields[3])
             )
-            self.db.commit()
-            if(fields[0] == 't'):
+            result = self.c.fetchone()
+            if result:
                 self.c.execute(
-                "INSERT INTO teachers (ID) SELECT MAX(ID) FROM users"
+                    "INSERT INTO users (FirstName, LastName, Login, Password) VALUES (%s, %s, %s, %s)",
+                    (fields[1], fields[2], fields[3], fields[4])
                 )
-            self.db.commit()
+                self.db.commit()
+                if(fields[0] == 't'):
+                    self.c.execute(
+                    "INSERT INTO teachers (ID) SELECT MAX(ID) FROM users"
+                    )
+                self.db.commit()
+            else:
+                result = None
         except:
             pass
+        return result
 
     def _logged(self,fields):
         response = 0

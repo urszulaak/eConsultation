@@ -149,7 +149,6 @@ class ChooseConsultView(View):
         return fields
 
     def _success(self, stdscr):
-        print("qwewqew")
         h, w = stdscr.getmaxyx()
         win_shadow = curses.newwin(h // 3, w // 4, h // 2 - h // 6 + 1, w // 2 - w // 8 + 1)
         win_shadow.attron(curses.color_pair(8))
@@ -157,16 +156,16 @@ class ChooseConsultView(View):
         win_shadow.refresh()
         win_shadow.attroff(curses.color_pair(8))
         win_error = curses.newwin(h // 3, w // 4, h // 2 - h // 6, w // 2 - w // 8)
-        win_error.attron(curses.color_pair(1))
+        win_error.attron(curses.color_pair(6))
         win_error.box()
         win_error.refresh()
-        win_error.attroff(curses.color_pair(1))
+        win_error.attroff(curses.color_pair(6))
         no_user_found = "\u2705 SUCCESSFULLY BOOKED! \u2705"
-        no_user_found2 = "    SUCCESSFULLY BOOKED!    "
+        no_user_found2 = "   SUCCESSFULLY BOOKED!   "
         curses.curs_set(0)
         stdscr.attron(curses.color_pair(6))
-        stdscr.addstr(h // 2, w // 2 - (len(no_user_found) // 2) - 1, no_user_found)
-        stdscr.refresh()
+        win_error.addstr(h // 2, w // 2 - (len(no_user_found) // 2) - 1, no_user_found)
+        win_error.refresh()
         time.sleep(0.6)
         stdscr.addstr(h // 2, w // 2 - (len(no_user_found2) // 2) - 1, no_user_found2)
         stdscr.refresh()
@@ -264,9 +263,11 @@ class ChooseConsultView(View):
             elif key == curses.KEY_ENTER or key in [10, 13]:
                 current_stamp = stampsID[current_stamp]
                 form = self._form(stdscr)
-                if self.chooseConsultController.form(current_teacher, selected_date, current_stamp, form, self.response):
+                if self.chooseConsultController.form(current_teacher, selected_date, current_stamp, form, self.response) != 0:
                     print("Proba")
                     self._success(stdscr)
+                    self._clearContent(stdscr)
+                    self.chooseConsultController.userHome()
             elif key == ord("c"):
                 self._navigate_days(stdscr, year, month, daysID, current_teacher)
             self._stamps(stdscr, stamps, current_stamp)

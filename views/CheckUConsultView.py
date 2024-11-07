@@ -3,7 +3,7 @@ import curses
 from curses import wrapper
 from curses.textpad import Textbox, rectangle
 
-class CheckConsultView(View):
+class CheckUConsultView(View):
 
     def __init__(self, controller,response=None):
         super().__init__()
@@ -73,7 +73,7 @@ class CheckConsultView(View):
             elif key == 5:
                 self._clearContent(stdscr, h, w, menu_height)
                 stdscr.refresh()
-                self.checkConsultController.teacherHome()
+                self.checkUConsultController.userHome()
 
             self._content(stdscr, current_row, content)
 

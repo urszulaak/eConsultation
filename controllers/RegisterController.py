@@ -8,8 +8,9 @@ class RegisterController(Controller):
         self.registerView = self.loadView("register")
         self.usersModel = UsersModel()
 
-    def _add(self, fields):
-        response = self.usersModel._add(fields)
+    def add(self, fields):
+        response = self.usersModel.add(fields)
+        print(response)
         if response != 0:
             print("Successfully added!")
         else:
