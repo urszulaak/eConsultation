@@ -7,7 +7,7 @@ class CheckUConsultView(View):
 
     def __init__(self, controller,response=None):
         super().__init__()
-        self.checkConsultController = controller
+        self.checkUConsultController = controller
         self.response = response
 
     def _content(self, stdscr, current_row, content):
@@ -62,7 +62,7 @@ class CheckUConsultView(View):
         h, w = stdscr.getmaxyx()
         menu_height = 9
         current_row = 0
-        content = self.checkConsultController.getConsult()
+        content = self.checkUConsultController.getConsult()
         self._content(stdscr, current_row, content)
         while 1:
             key = stdscr.getch()

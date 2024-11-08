@@ -45,7 +45,7 @@ class ConsultModel():
             results = self.c.fetchall()
 
             for row in results:
-                consultation = f"Date: {row[0]} Hour: {row[5]} Student: {row[1]} {row[2]} Topic: {row[3]} Description: {row[4]}"
+                consultation = f"Date: {row[0]} Time: {row[5]} Student: {row[1]} {row[2]} Topic: {row[3]} Description: {row[4]}"
                 unique_ids.append([consultation])
         except Exception as e:
             print(f"Error: {e}")
@@ -70,7 +70,7 @@ class ConsultModel():
             results = self.c.fetchall()
 
             for row in results:
-                consultation = f"Date: {row[0]} Hour: {row[5]} Teacher: {row[1]} {row[2]} Topic: {row[3]} Description: {row[4]}"
+                consultation = f"Date: {row[0]} Time: {row[5]} Teacher: {row[1]} {row[2]} Topic: {row[3]} Description: {row[4]}"
                 unique_ids.append([consultation])
         except Exception as e:
             print(f"Error: {e}")

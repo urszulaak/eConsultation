@@ -59,38 +59,67 @@ class RegisterView(View):
 
         self._clearContent(stdscr, h, w, menu_height)
         if self.registerController.add(fields):
-            pass
-        win_shadow = curses.newwin(h // 3, w // 4, h // 2 - h // 6 + 1, w // 2 - w // 8 + 1)
-        win_shadow.attron(curses.color_pair(5))
-        win_shadow.box()
-        win_shadow.refresh()
-        win_shadow.attroff(curses.color_pair(5))
+            win_shadow = curses.newwin(h // 3, w // 4, h // 2 - h // 6 + 1, w // 2 - w // 8 + 1)
+            win_shadow.attron(curses.color_pair(4))
+            win_shadow.box()
+            win_shadow.refresh()
+            win_shadow.attroff(curses.color_pair(4))
 
-        win_error = curses.newwin(h // 3, w // 4, h // 2 - h // 6, w // 2 - w // 8)
-        win_error.attron(curses.color_pair(1))
-        win_error.box()
-        win_error.refresh()
-        win_error.attroff(curses.color_pair(1))
+            win_success = curses.newwin(h // 3, w // 4, h // 2 - h // 6, w // 2 - w // 8)
+            win_success.attron(curses.color_pair(1))
+            win_success.box()
+            win_success.refresh()
+            win_success.attroff(curses.color_pair(1))
 
-        no_user_found = "\u2705 SUCCESSFULLY ADDED! \u2705"
-        no_user_found2 = "    SUCCESSFULLY ADDED!    "
-        text_x = (w // 4 - len(no_user_found)) // 2
-        text_y = h // 3 // 2
-        curses.curs_set(0)
-        stdscr.attron(curses.color_pair(1))
-        stdscr.addstr(h // 2, w // 2 - (len(no_user_found) // 2) - 1, no_user_found)
-        stdscr.refresh()
-        time.sleep(0.6)
-        stdscr.addstr(h // 2, w // 2 - (len(no_user_found2) // 2) - 1, no_user_found2)
-        stdscr.refresh()
-        time.sleep(0.6)
-        stdscr.addstr(h // 2, w // 2 - (len(no_user_found) // 2) - 1, no_user_found)
-        stdscr.refresh()
-        time.sleep(0.6)
-        stdscr.attroff(curses.color_pair(1))
-        self._clearContent(stdscr, h, w, menu_height)
-        stdscr.refresh()
-        self.registerController._added()
+            success = "\u2705 SUCCESSFULLY ADDED! \u2705"
+            success2 = "    SUCCESSFULLY ADDED!    "
+            text_x = (w // 4 - len(success)) // 2
+            text_y = h // 3 // 2
+            curses.curs_set(0)
+            stdscr.attron(curses.color_pair(1))
+            stdscr.addstr(h // 2, w // 2 - (len(success) // 2) - 1, success)
+            stdscr.refresh()
+            time.sleep(0.6)
+            stdscr.addstr(h // 2, w // 2 - (len(success2) // 2) - 1, success2)
+            stdscr.refresh()
+            time.sleep(0.6)
+            stdscr.addstr(h // 2, w // 2 - (len(success) // 2) - 1, success)
+            stdscr.refresh()
+            time.sleep(0.6)
+            stdscr.attroff(curses.color_pair(1))
+            self._clearContent(stdscr, h, w, menu_height)
+            stdscr.refresh()
+            self.registerController._added()
+        else:
+            win_shadow = curses.newwin(h // 3, w // 4, h // 2 - h // 6 + 1, w // 2 - w // 8 + 1)
+            win_shadow.attron(curses.color_pair(4))
+            win_shadow.box()
+            win_shadow.refresh()
+            win_shadow.attroff(curses.color_pair(4))
+
+            win_error = curses.newwin(h // 3, w // 4, h // 2 - h // 6, w // 2 - w // 8)
+            win_error.attron(curses.color_pair(2))
+            win_error.box()
+            win_error.refresh()
+            win_error.attroff(curses.color_pair(2))
+
+            exist = "\u274c USER WITH THIS LOGIN ALREADY EXIST! \u274c"
+            exist2 = "    USER WITH THIS LOGIN ALREADY EXIST!    "
+            curses.curs_set(0)
+            stdscr.attron(curses.color_pair(2))
+            stdscr.addstr(h // 2, w // 2 - (len(exist) // 2) - 1, exist)
+            stdscr.refresh()
+            time.sleep(0.6)
+            stdscr.addstr(h // 2, w // 2 - (len(exist2) // 2) - 1, exist2)
+            stdscr.refresh()
+            time.sleep(0.6)
+            stdscr.addstr(h // 2, w // 2 - (len(exist) // 2) - 1, exist)
+            stdscr.refresh()
+            time.sleep(0.6)
+            stdscr.attroff(curses.color_pair(2))
+            self._clearContent(stdscr, h, w, menu_height)
+            stdscr.refresh()
+            self._content(stdscr)
 
     def _clearContent(self, stdscr, h, w, menu_height):
         start_y = menu_height + 1

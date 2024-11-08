@@ -164,13 +164,13 @@ class ChooseConsultView(View):
         no_user_found2 = "   SUCCESSFULLY BOOKED!   "
         curses.curs_set(0)
         stdscr.attron(curses.color_pair(6))
-        win_error.addstr(h // 2, w // 2 - (len(no_user_found) // 2) - 1, no_user_found)
-        win_error.refresh()
-        time.sleep(0.6)
-        stdscr.addstr(h // 2, w // 2 - (len(no_user_found2) // 2) - 1, no_user_found2)
+        stdscr.addstr(h // 2, w // 2 - (len(no_user_found) // 2), no_user_found)
         stdscr.refresh()
         time.sleep(0.6)
-        stdscr.addstr(h // 2, w // 2 - (len(no_user_found) // 2) - 1, no_user_found)
+        stdscr.addstr(h // 2, w // 2 - (len(no_user_found2) // 2), no_user_found2)
+        stdscr.refresh()
+        time.sleep(0.6)
+        stdscr.addstr(h // 2, w // 2 - (len(no_user_found) // 2), no_user_found)
         stdscr.refresh()
         time.sleep(0.6)
         stdscr.attroff(curses.color_pair(6))
@@ -224,11 +224,20 @@ class ChooseConsultView(View):
         selected_week = 0
         selected_date = None
 
+        cal = calendar.monthcalendar(year, month)
+        for week_idx, week in enumerate(cal):
+            for day_idx, day in enumerate(week):
+                if day != 0:
+                    selected_day = day_idx
+                    selected_week = week_idx
+                    break
+            if selected_day is not None:
+                break
+
         while True:
             self.draw_calendar(stdscr, year, month, daysID, selected_day, selected_week)
             key = stdscr.getch()
 
-            cal = calendar.monthcalendar(year, month)
             if key == curses.KEY_RIGHT:
                 selected_day = (selected_day + 1) % 7
             elif key == curses.KEY_LEFT:
@@ -241,7 +250,6 @@ class ChooseConsultView(View):
                 day = cal[selected_week][selected_day]
                 if selected_day not in daysID:
                     pass
-                    #wyswietl komunikat brak konsultacji w danym dniu i wróć do wyboru dnia
                 elif day != 0:
                     selected_date = f"{year}-{month:02}-{day:02}"
                     self._moveStamps(stdscr, year, month, daysID, current_teacher, selected_date, selected_day)
