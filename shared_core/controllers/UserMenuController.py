@@ -1,5 +1,9 @@
-from core.Controller import Controller
-from core.Core import Core
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from shared_core.Controller import Controller
+from shared_core.Core import Core
+from shared_core.ViewFactory import ViewFactory
 from models.UsersModel import UsersModel
 
 class UserMenuController(Controller):

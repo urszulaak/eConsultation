@@ -1,6 +1,6 @@
 import locale
 import os
-from core.View import View
+from shared_core.View import View
 import curses
 from curses import wrapper
 from curses.textpad import Textbox, rectangle
