@@ -3,7 +3,6 @@ import os
 from shared_core.View import View
 import curses
 from curses import wrapper
-from curses.textpad import Textbox, rectangle
 
 class TeacherMenuView(View):
 
@@ -27,7 +26,7 @@ class TeacherMenuView(View):
         box_height = available_height // num_items
         
         box_width = w - 2
-
+        self._clearContent(stdscr, h, w, menu_height)
         for id, row in enumerate(content):
             x = 1
             y = menu_height + id * box_height
@@ -54,7 +53,7 @@ class TeacherMenuView(View):
         end_y = h
 
         for i in range(start_y, end_y):
-            stdscr.move(i, 1)
+            stdscr.move(i, 0)
             stdscr.clrtoeol()
         stdscr.refresh()
 

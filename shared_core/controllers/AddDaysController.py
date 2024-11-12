@@ -18,7 +18,7 @@ class AddDaysController(Controller):
     def _getDays(self):
         days = []
         for i in range(1,8):
-            response = self.daysModel._days(i)
+            response = self.daysModel.days(i)
             days.append(response)
         return days
 
@@ -30,12 +30,16 @@ class AddDaysController(Controller):
         return timeStamps
 
     def _saveTimeStamps(self, selected, current_day, user):
+        self.timeStampsModel.delStamps(current_day, user)
         for select in selected:
             response = self.timeStampsModel._saveTime(select, current_day, user)
             if response != 0:
                 print("Successfully added!")
             else:
                 print("Error while adding")
+
+    def ifAdded(self, current_teacher, current_day):
+        return self.timeStampsModel._stampsID(current_teacher, current_day)
 
     def _teacherHome(self):
         Core.openController("teacherMenu", self.response).main()

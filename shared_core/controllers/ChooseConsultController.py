@@ -31,7 +31,7 @@ class ChooseConsultController(Controller):
         return teachers
 
     def _getDaysID(self,current_teacher):
-        daysID = self.timeStampsModel._daysID(current_teacher)
+        daysID = self.timeStampsModel.daysID(current_teacher)
         return daysID
 
     def getStampsID(self, current_teacher, selected_day):

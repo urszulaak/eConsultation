@@ -18,7 +18,8 @@ class HomeController(Controller):
         elif current_row == 2:
             Core.openController("information").main()
         elif current_row == 3:
-            Core.openController("graphic").main()
+            ViewFactory.set_mode("gui")
+            Core.openController("home").main()
         else:
             quit()
 

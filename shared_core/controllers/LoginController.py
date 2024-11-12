@@ -26,8 +26,8 @@ class LoginController(Controller):
         else:
             self._logged(fields)
 
-    def _home(self):
-        Core.openController("Home").main()
+    def home(self):
+        Core.openController("home").main()
         
     def main(self):
         self.loginView.main()

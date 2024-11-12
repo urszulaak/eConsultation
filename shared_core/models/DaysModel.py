@@ -16,7 +16,7 @@ class DaysModel():
             print('not connected')
         self.c = self.db.cursor()
 
-    def _days(self, i):
+    def days(self, i):
         response = 0
         result = None
         try:

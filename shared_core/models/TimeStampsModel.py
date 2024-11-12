@@ -29,11 +29,21 @@ class TimeStampsModel():
             pass
         return response
 
+    def delStamps(self, current_day, user):
+        current_day += 1
+        self.c.execute(
+            "DELETE FROM teachers_days_time WHERE ID_teachers = %s AND ID_days = %s",
+            (user, current_day,)
+        )
+        self.db.commit()
+
     def _saveTime(self, select, current_day, user):
+        current_day += 1
+        select += 1
         try:
             self.c.execute(
                 "INSERT INTO teachers_days_time (ID_teachers, ID_days, ID_time) VALUES (%s, %s, %s)",
-                (user,current_day+1,select+1,)
+                (user, current_day, select,)
             )
             self.db.commit()
         except:
@@ -70,7 +80,7 @@ class TimeStampsModel():
             pass
         return response
 
-    def _daysID(self,current_teacher):
+    def daysID(self, current_teacher):
         unique_ids = []
         try:
             self.c.execute("SELECT DISTINCT ID_days FROM teachers_days_time WHERE ID_teachers = %s",
@@ -83,10 +93,11 @@ class TimeStampsModel():
         return unique_ids
 
     def _stampsID(self, current_teacher, day):
+        day += 1
         unique_ids = []
         try:
             self.c.execute("SELECT ID_time FROM teachers_days_time WHERE ID_teachers = %s && ID_days = %s",
-                           (current_teacher,day,)
+                           (current_teacher, day,)
                            )
             results = self.c.fetchall()
             unique_ids = [row[0] for row in results]

@@ -18,7 +18,7 @@ class ChooseConsultView(View):
         h, w = stdscr.getmaxyx()
         menu_height = 10
 
-        #curses.init_color(8,220,220,220)
+        curses.init_color(8,220,220,220)
 
         curses.init_pair(1, curses.COLOR_BLUE, curses.COLOR_BLUE)
         curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
@@ -28,7 +28,8 @@ class ChooseConsultView(View):
         curses.init_pair(6, curses.COLOR_GREEN, curses.COLOR_BLACK)
         curses.init_pair(7, curses.COLOR_WHITE, curses.COLOR_GREEN)
         curses.init_pair(8, curses.COLOR_GREEN, curses.COLOR_GREEN)
-        #curses.init_pair(8, 8, curses.COLOR_BLACK)
+        curses.init_pair(9, 8, curses.COLOR_BLACK)
+        curses.init_pair(10, curses.COLOR_WHITE, 8)
         available_height = h - menu_height - 1
         line = "Choose available teacher [ctrl + E - exit]"
         stdscr.attron(curses.color_pair(3))
@@ -50,7 +51,6 @@ class ChooseConsultView(View):
             else:
                 win_day.addstr(text_y, text_x, str(teacher))
             win_day.refresh()
-        stdscr.attroff(curses.color_pair(3))
 
     def draw_calendar(self, stdscr, year, month, daysID, selected_day=None, selected_week=None):
         h, w = stdscr.getmaxyx()
@@ -67,7 +67,7 @@ class ChooseConsultView(View):
         days = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
         for i, day in enumerate(days):
             stdscr.attron(curses.color_pair(3))
-            stdscr.addstr(menu_height+2, (w//2-15)+ i * 4 + 2, day)
+            stdscr.addstr(menu_height+2, (w//2-15) + i * 4 + 2, day)
             stdscr.attroff(curses.color_pair(3))
 
         cal = calendar.monthcalendar(year, month)
@@ -76,11 +76,11 @@ class ChooseConsultView(View):
             for day_idx, day in enumerate(week):
                 if day == 0:
                     continue
-                color = curses.color_pair(6) if day_idx in daysID else curses.color_pair(0)
+                color = curses.color_pair(6) if day_idx+1 in daysID else curses.color_pair(9)
 
                 if selected_day == day_idx and selected_week == week_idx:
-                    stdscr.attron(curses.color_pair(5) | curses.A_BOLD)
-                    if day_idx in daysID:
+                    stdscr.attron(curses.color_pair(10) | curses.A_BOLD)
+                    if day_idx+1 in daysID:
                         stdscr.attron(curses.color_pair(7) | curses.A_BOLD)
                 else:
                     stdscr.attron(color)
@@ -94,15 +94,14 @@ class ChooseConsultView(View):
     def _stamps(self, stdscr, stamps, current_stamp):
         h, w = stdscr.getmaxyx()
         menu_height = 28
-
         available_height = h - menu_height - 1
-        line = "Choose available teacher [ctrl + E - exit]"
+        line = "Choose available time [c - cancel]"
         stdscr.attron(curses.color_pair(3))
-        stdscr.addstr(menu_height + 1, w // 2 - (len(line) // 2), line)
+        stdscr.addstr(menu_height + 2, w // 2 - (len(line) // 2), line)
         available_width = w // len(stamps)
         for i, stamp in enumerate(stamps):
             x_position = available_width * i
-            win_day = curses.newwin(5, available_width, menu_height + 2, x_position)
+            win_day = curses.newwin(5, available_width, menu_height + 3, x_position)
             win_day.attron(curses.color_pair(3))
             win_day.box()
             win_day.attroff(curses.color_pair(3))
@@ -120,13 +119,12 @@ class ChooseConsultView(View):
 
     def _form(self, stdscr):
         h, w = stdscr.getmaxyx()
-        menu_height = 35
+        menu_height = 36
         fields = []
         content = ["Topic: ","Description: "]
-        box_height = (h - 28) // len(content)
         for id, row in enumerate(content):
             x = 1
-            y = menu_height + id * 2
+            y = menu_height + id * 3
 
             win = curses.newwin(3, w - 4, y, x)
             text_x = 2
@@ -136,6 +134,7 @@ class ChooseConsultView(View):
             win.attroff(curses.color_pair(3))
             win.refresh()
 
+            stdscr.hline(y + 2, x + len(row) + 1, curses.ACS_HLINE, w - len(row))
             win_text = curses.newwin(1, w - len(row) - 6, y + 1, x + len(row) + 2)
             box = Textbox(win_text)
             win_text.refresh()
@@ -192,12 +191,11 @@ class ChooseConsultView(View):
                 self._moveCalendar(stdscr, current_teacher)
             elif key == 5:
                 self._clearContent(stdscr)
-                self.chooseConsultController._userHome()
+                self.chooseConsultController.userHome()
             self._content(stdscr, current_teacher, teachers)
 
     def _moveCalendar(self, stdscr, current_teacher):
         daysID = self.chooseConsultController._getDaysID(current_teacher)
-        #days = self.chooseConsultController._getDays(current_teacher)
         current_date = datetime.now()
         year, month = current_date.year, current_date.month
         while 1:
@@ -248,10 +246,11 @@ class ChooseConsultView(View):
                 selected_week = (selected_week - 1) % len(cal)
             elif key == curses.KEY_ENTER or key in [10, 13]:
                 day = cal[selected_week][selected_day]
-                if selected_day not in daysID:
+                if selected_day+1 not in daysID:
                     pass
                 elif day != 0:
                     selected_date = f"{year}-{month:02}-{day:02}"
+                    selected_day
                     self._moveStamps(stdscr, year, month, daysID, current_teacher, selected_date, selected_day)
             elif key == ord("c"):
                 self._moveCalendar(stdscr, current_teacher)
@@ -272,7 +271,6 @@ class ChooseConsultView(View):
                 current_stamp = stampsID[current_stamp]
                 form = self._form(stdscr)
                 if self.chooseConsultController.form(current_teacher, selected_date, current_stamp, form, self.response) != 0:
-                    print("Proba")
                     self._success(stdscr)
                     self._clearContent(stdscr)
                     self.chooseConsultController.userHome()

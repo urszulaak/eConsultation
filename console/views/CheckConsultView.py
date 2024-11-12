@@ -54,7 +54,7 @@ class CheckConsultView(View):
         end_y = h
 
         for i in range(start_y, end_y):
-            stdscr.move(i, 1)
+            stdscr.move(i, 0)
             stdscr.clrtoeol()
         stdscr.refresh()
 

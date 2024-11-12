@@ -21,7 +21,6 @@ class AddDaysView(View):
         curses.init_pair(5, curses.COLOR_WHITE, curses.COLOR_BLUE)
         curses.init_pair(6, curses.COLOR_GREEN, curses.COLOR_BLACK)
         curses.init_pair(7, curses.COLOR_WHITE, curses.COLOR_GREEN)
-        available_height = h - menu_height - 1
         line = "Choose day [ctrl + E - exit]"
         stdscr.attron(curses.color_pair(3))
         stdscr.addstr(menu_height + 1, w // 2 - (len(line) // 2), line)
@@ -55,10 +54,10 @@ class AddDaysView(View):
         stdscr.attron(curses.color_pair(3))
         stdscr.addstr(menu_height + 1, w // 2 - (len(line) // 2), line)
         stdscr.attroff(curses.color_pair(3))
-        id=0
+        id = 0
         for i, stamp in enumerate(time_stamps):
             if i == 7:
-                id=0
+                id = 0
                 menu_height += 6
             x_position = available_width * id
             win_day = curses.newwin(5, available_width, menu_height + 2, x_position)
@@ -83,7 +82,7 @@ class AddDaysView(View):
                     win_day.attron(curses.color_pair(7))
                     win_day.addstr(text_y, text_x, str(stamp))
                     win_day.attroff(curses.color_pair(7))
-            id +=1
+            id += 1
             win_day.refresh()
 
     def _move(self, stdscr):
@@ -105,9 +104,8 @@ class AddDaysView(View):
 
     def _moveStamps(self, stdscr, current_day):
         current_stamp=0
-        selected = []
+        selected = self.addDaysController.ifAdded(self.response, current_day)
         time_stamps = self.addDaysController._getTimeStamps()
-
         self._timeStamps(stdscr, current_stamp, time_stamps, selected)
         while 1:
             key = stdscr.getch()
@@ -126,7 +124,7 @@ class AddDaysView(View):
                 selected.append(current_stamp)
             elif key in [ord('s'), ord('c')]:
                 if key == ord('s'):
-                    self.addDaysController._saveTimeStamps(selected,current_day,self.response)
+                    self.addDaysController._saveTimeStamps(selected, current_day, self.response)
                     self._clearPart(stdscr)
                     self._move(stdscr)
                 elif key == ord('c'):

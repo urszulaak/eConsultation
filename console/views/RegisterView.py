@@ -18,8 +18,13 @@ class RegisterView(View):
         stdscr.encoding = 'utf-8'
         os.environ['PYTHONIOENCODING'] = 'utf-8'
         h, w = stdscr.getmaxyx()
-        content = ['Type of account [t/s]: ','FirstName: ', 'LastName: ', 'Login: ', 'Password: ']
+        content = ['Teacher account [t/T]: ','FirstName: ', 'LastName: ', 'Login: ', 'Password: ']
         menu_height = 10
+        message = "Exit to menu [ctrl + E]"
+        stdscr.attron(curses.color_pair(3))
+        stdscr.addstr(menu_height + 2, w//2-(len(message)//2), message)
+        stdscr.attroff(curses.color_pair(3))
+        menu_height = 13
         curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
         curses.init_pair(3, curses.COLOR_CYAN, curses.COLOR_BLACK)
@@ -34,7 +39,7 @@ class RegisterView(View):
 
         for id, row in enumerate(content):
             x = 1
-            y = menu_height + id * 2
+            y = menu_height + id * 3
 
             win = curses.newwin(3, w - 4, y, x)
             text_x = 2
@@ -48,22 +53,43 @@ class RegisterView(View):
             box = Textbox(win_text)
             win_text.refresh()
 
-            #stdscr.hline(y + 2, x + len(row) + 1, curses.ACS_HLINE, w - len(row))
+            stdscr.hline(y + 2, x + len(row) + 1, curses.ACS_HLINE, w - len(row))
             stdscr.refresh()
+            password_input = []
             while True:
-                input_text = box.edit()
-                win_text.refresh()
-                fields.append(input_text.strip())
-                break
+                key = win_text.getch()
+                if key == 5:
+                    self.registerController.home()
+                elif key == curses.KEY_ENTER or key == 10:
+                    if id == 4:
+                        fields.append("".join(password_input))
+                    else:
+                        input_text = box.gather().strip()
+                        fields.append(input_text)
+                    break
+                elif key in (curses.KEY_BACKSPACE, 127, 8):
+                    if id == 4 and password_input:
+                        password_input.pop()
+                        win_text.clear()
+                        win_text.addstr(0, 0, "\u2022" * len(password_input))
+                    else:
+                        box.do_command(key)
+                else:
+                    if id == 4:
+                        password_input.append(chr(key))
+                        win_text.addstr(0, len(password_input) - 1, "\u2022")
+                    else:
+                        box.do_command(key)
+                    win_text.refresh()
 
 
         self._clearContent(stdscr, h, w, menu_height)
         if self.registerController.add(fields):
             win_shadow = curses.newwin(h // 3, w // 4, h // 2 - h // 6 + 1, w // 2 - w // 8 + 1)
-            win_shadow.attron(curses.color_pair(4))
+            win_shadow.attron(curses.color_pair(5))
             win_shadow.box()
             win_shadow.refresh()
-            win_shadow.attroff(curses.color_pair(4))
+            win_shadow.attroff(curses.color_pair(5))
 
             win_success = curses.newwin(h // 3, w // 4, h // 2 - h // 6, w // 2 - w // 8)
             win_success.attron(curses.color_pair(1))
@@ -73,8 +99,6 @@ class RegisterView(View):
 
             success = "\u2705 SUCCESSFULLY ADDED! \u2705"
             success2 = "    SUCCESSFULLY ADDED!    "
-            text_x = (w // 4 - len(success)) // 2
-            text_y = h // 3 // 2
             curses.curs_set(0)
             stdscr.attron(curses.color_pair(1))
             stdscr.addstr(h // 2, w // 2 - (len(success) // 2) - 1, success)
@@ -126,7 +150,7 @@ class RegisterView(View):
         end_y = h
 
         for i in range(start_y, end_y):
-            stdscr.move(i, 1)
+            stdscr.move(i, 0)
             stdscr.clrtoeol()
         stdscr.refresh()
 
