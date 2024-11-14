@@ -5,6 +5,8 @@ import calendar
 from datetime import datetime
 from curses.textpad import Textbox, rectangle
 import time
+import requests
+import json
 
 class ChooseConsultView(View):
 
@@ -12,6 +14,25 @@ class ChooseConsultView(View):
         super().__init__()
         self.chooseConsultController = controller
         self.response = response
+        self.holidays = {}
+
+    def fetch_holidays(self, year):
+        if year in self.holidays:
+            return
+        try:
+            url = f"https://date.nager.at/api/v3/PublicHolidays/{year}/PL"
+            response = requests.get(url)
+            response.raise_for_status()
+            holidays = response.json()
+
+            self.holidays[year] = {datetime.strptime(holiday['date'], '%Y-%m-%d').date(): holiday['name'] for holiday in holidays}
+        except requests.RequestException as e:
+            print(f"Error fetching holidays: {e}")
+            self.holidays[year] = {}
+
+    def is_holiday(self, date):
+        return date in self.holidays.get(date.year, {})
+
 
     def _content(self, stdscr, current_teacher, teachers):
         curses.curs_set(0)
@@ -71,16 +92,24 @@ class ChooseConsultView(View):
             stdscr.attroff(curses.color_pair(3))
 
         cal = calendar.monthcalendar(year, month)
+        self.fetch_holidays(year)
+        today = datetime.now().date()
         start_y = 1
         for week_idx, week in enumerate(cal):
             for day_idx, day in enumerate(week):
                 if day == 0:
                     continue
                 color = curses.color_pair(6) if day_idx+1 in daysID else curses.color_pair(9)
+                day_date = datetime(year, month, day).date()
+                
+                if day_date < today or day_idx + 1 not in daysID or self.is_holiday(day_date):
+                    color = curses.color_pair(9)
+                else:
+                    color = curses.color_pair(6)
 
                 if selected_day == day_idx and selected_week == week_idx:
                     stdscr.attron(curses.color_pair(10) | curses.A_BOLD)
-                    if day_idx+1 in daysID:
+                    if day_date >= today and day_idx + 1 in daysID:
                         stdscr.attron(curses.color_pair(7) | curses.A_BOLD)
                 else:
                     stdscr.attron(color)
@@ -101,20 +130,20 @@ class ChooseConsultView(View):
         available_width = w // len(stamps)
         for i, stamp in enumerate(stamps):
             x_position = available_width * i
-            win_day = curses.newwin(5, available_width, menu_height + 3, x_position)
-            win_day.attron(curses.color_pair(3))
-            win_day.box()
-            win_day.attroff(curses.color_pair(3))
+            win_stamp = curses.newwin(5, available_width, menu_height + 3, x_position)
+            win_stamp.attron(curses.color_pair(3))
+            win_stamp.box()
+            win_stamp.attroff(curses.color_pair(3))
             text = str(stamp)
             text_x = (available_width - len(text)) // 2
             text_y = 5 // 2
             if i == current_stamp:
-                win_day.attron(curses.color_pair(5))
-                win_day.addstr(text_y, text_x, str(stamp))
-                win_day.attroff(curses.color_pair(5))
+                win_stamp.attron(curses.color_pair(5))
+                win_stamp.addstr(text_y, text_x, str(stamp))
+                win_stamp.attroff(curses.color_pair(5))
             else:
-                win_day.addstr(text_y, text_x, str(stamp))
-            win_day.refresh()
+                win_stamp.addstr(text_y, text_x, str(stamp))
+            win_stamp.refresh()
         stdscr.attroff(curses.color_pair(3))
 
     def _form(self, stdscr):
@@ -221,6 +250,8 @@ class ChooseConsultView(View):
         selected_day = 0
         selected_week = 0
         selected_date = None
+        today = datetime.now().date()
+        day_date = None
 
         cal = calendar.monthcalendar(year, month)
         for week_idx, week in enumerate(cal):
@@ -246,11 +277,11 @@ class ChooseConsultView(View):
                 selected_week = (selected_week - 1) % len(cal)
             elif key == curses.KEY_ENTER or key in [10, 13]:
                 day = cal[selected_week][selected_day]
-                if selected_day+1 not in daysID:
+                day_date = datetime(year, month, day).date()
+                if selected_day+1 not in daysID or day_date<today or self.is_holiday(day_date):
                     pass
                 elif day != 0:
                     selected_date = f"{year}-{month:02}-{day:02}"
-                    selected_day
                     self._moveStamps(stdscr, year, month, daysID, current_teacher, selected_date, selected_day)
             elif key == ord("c"):
                 self._moveCalendar(stdscr, current_teacher)
@@ -260,6 +291,7 @@ class ChooseConsultView(View):
         current_stamp = 0
         stampsID = self.chooseConsultController.getStampsID(current_teacher, selected_day)
         stamps = self.chooseConsultController.getStamps(current_teacher, selected_day)
+        #block_stampsID = self.chooseConsultController.getBlockStampsID(current_teacher, selected_day)
         self._stamps(stdscr, stamps, current_stamp)
         while 1:
             key = stdscr.getch()
