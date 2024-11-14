@@ -93,7 +93,7 @@ class ChooseConsultView(View):
 
     def _stamps(self, stdscr, stamps, current_stamp):
         h, w = stdscr.getmaxyx()
-        menu_height = 28
+        menu_height = 27
         available_height = h - menu_height - 1
         line = "Choose available time [c - cancel]"
         stdscr.attron(curses.color_pair(3))
@@ -119,7 +119,7 @@ class ChooseConsultView(View):
 
     def _form(self, stdscr):
         h, w = stdscr.getmaxyx()
-        menu_height = 36
+        menu_height = 35
         fields = []
         content = ["Topic: ","Description: "]
         for id, row in enumerate(content):
