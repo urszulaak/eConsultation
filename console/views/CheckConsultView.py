@@ -28,8 +28,6 @@ class CheckConsultView(View):
         available_height = h - menu_height - 1
         if not num_items:
             self._noConsult(stdscr, menu_height)
-            #no consultation communicat and back to main
-            pass
         box_height = available_height // num_items
 
         box_width = w - 2
