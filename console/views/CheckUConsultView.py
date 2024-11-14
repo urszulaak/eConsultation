@@ -22,6 +22,9 @@ class CheckUConsultView(View):
         stdscr.attroff(curses.color_pair(2))
         menu_height = 12
         num_items = len(content)
+        if not num_items:
+            #no consultation communicat and back to main
+            pass
         available_height = h - menu_height - 1
 
         box_height = available_height // num_items
