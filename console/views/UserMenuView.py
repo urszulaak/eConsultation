@@ -28,7 +28,7 @@ class UserMenuView(View):
         box_height = available_height // num_items
 
         box_width = w - 2
-
+        self._clearContent(stdscr, h, w, menu_height)
         for id, row in enumerate(content):
             x = 1
             y = menu_height + id * box_height

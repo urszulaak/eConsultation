@@ -1,5 +1,6 @@
 from shared_core.View import View
 import curses
+import time
 from curses import wrapper
 from curses.textpad import Textbox, rectangle
 
@@ -16,6 +17,8 @@ class CheckUConsultView(View):
         menu_height = 10
         curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLUE)
         curses.init_pair(2, curses.COLOR_CYAN, curses.COLOR_BLACK)
+        curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK)
+        curses.init_pair(4, curses.COLOR_RED, curses.COLOR_RED)
         exit_text = "Exit [ctrl+E]"
         stdscr.attron(curses.color_pair(2))
         stdscr.addstr(menu_height+1, w//2-(len(exit_text)//2), exit_text)
@@ -23,8 +26,7 @@ class CheckUConsultView(View):
         menu_height = 12
         num_items = len(content)
         if not num_items:
-            #no consultation communicat and back to main
-            pass
+            self._noConsult(stdscr, menu_height)
         available_height = h - menu_height - 1
 
         box_height = available_height // num_items
@@ -79,6 +81,40 @@ class CheckUConsultView(View):
                 self.checkUConsultController.userHome()
 
             self._content(stdscr, current_row, content)
+
+    def _noConsult(self, stdscr, menu_height):
+        h, w = stdscr.getmaxyx()
+        win_shadow = curses.newwin(h // 3, w // 4, h // 2 - h // 6 + 1, w // 2 - w // 8 + 1)
+        win_shadow.attron(curses.color_pair(4))
+        win_shadow.box()
+        win_shadow.refresh()
+        win_shadow.attroff(curses.color_pair(4))
+
+        win_error = curses.newwin(h // 3, w // 4, h // 2 - h // 6, w // 2 - w // 8)
+        win_error.attron(curses.color_pair(3))
+        win_error.box()
+        win_error.refresh()
+        win_error.attroff(curses.color_pair(3))
+
+        no_user_found = "\u274c NO CONSULT FOUND! \u274c"
+        no_user_found2 = "    NO CONSULT FOUND!    "
+        text_x = (w // 4 - len(no_user_found)) // 2
+        text_y = h // 3 // 2
+        curses.curs_set(0)
+        stdscr.attron(curses.color_pair(3))
+        stdscr.addstr(h//2, w//2-(len(no_user_found)//2)-1, no_user_found)
+        stdscr.refresh()
+        time.sleep(0.6)
+        stdscr.addstr(h//2, w//2-(len(no_user_found2)//2)-1, no_user_found2)
+        stdscr.refresh()
+        time.sleep(0.6)
+        stdscr.addstr(h//2, w//2-(len(no_user_found)//2)-1, no_user_found)
+        stdscr.refresh()
+        time.sleep(0.6)
+        stdscr.attroff(curses.color_pair(3))
+        self._clearContent(stdscr, h, w, menu_height)
+        stdscr.refresh()
+        self.checkUConsultController.userHome()
 
     def main(self):
         wrapper(self._move)
