@@ -9,6 +9,9 @@ class InformationController(Controller):
 
     def __init__(self,response=None):
         self.informationView = self.loadView("information")
+
+    def home(self):
+        Core.openController("home").main()
         
     def main(self):
         self.informationView.main()

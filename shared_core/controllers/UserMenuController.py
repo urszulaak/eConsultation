@@ -13,13 +13,11 @@ class UserMenuController(Controller):
         self.usersModel = UsersModel()
         self.response = response
 
-    def _menuChoice(self, current_row):
+    def menuChoice(self, current_row):
         if current_row == 0:
             Core.openController("chooseConsult",self.response).main()
         elif current_row == 1:
             Core.openController("checkUConsult",self.response).main()
-        elif current_row == 2:
-            Core.openController("information").main()
         else:
             Core.openController("home").main()
 

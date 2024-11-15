@@ -13,13 +13,11 @@ class TeacherMenuController(Controller):
         self.usersModel = UsersModel()
         self.response = response
 
-    def _menuChoice(self, current_row, resposne):
+    def menuChoice(self, current_row):
         if current_row == 0:
             Core.openController("addDays",self.response).main()
         elif current_row == 1:
             Core.openController("checkConsult",self.response).main()
-        elif current_row == 2:
-            Core.openController("information").main()
         else:
             Core.openController("home").main()
         

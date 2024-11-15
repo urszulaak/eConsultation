@@ -1,19 +1,20 @@
 import mysql.connector
+from mysql.connector import errors
 
 class TimeStampsModel():
 
     def __init__(self):
-        self.db = mysql.connector.connect(
-            database="econsultationdb",
-            host="localhost",
-            user="root",
-            password="",
-            charset="utf8"
-        )
-        if self.db.is_connected():
-            print('Connected')
-        else:
-            print('not connected')
+        try:
+            self.db = mysql.connector.connect(
+                database="econsultationdb",
+                host="localhost",
+                user="root",
+                password="",
+                charset="utf8"
+            )
+        except errors.InterfaceError as e:
+            print('\033[31mBaza danych nie odpowiada! Sprawdź połączenie z bazą MySQL!\033[0m')
+            exit(1)
         self.c = self.db.cursor()
 
     def _timeStamps(self, i):

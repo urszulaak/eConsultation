@@ -14,11 +14,10 @@ class CheckUConsultController(Controller):
         self.response = response
 
     def getConsult(self):
-        consult = []
         response = self.consultModel.consultsU(self.response)
         return response
     
-    def userHome(self):
+    def home(self):
         Core.openController("userMenu", self.response).main()
 
     def main(self):

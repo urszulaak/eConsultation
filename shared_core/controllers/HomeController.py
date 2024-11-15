@@ -1,5 +1,6 @@
 import sys
 import os
+import subprocess
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from shared_core.Controller import Controller
 from shared_core.Core import Core
@@ -10,7 +11,7 @@ class HomeController(Controller):
     def __init__(self,response=None):
         self.homeView = ViewFactory.load_view("home", self)
 
-    def _menuChoice(self, current_row):
+    def menuChoice(self, current_row):
         if current_row == 0:
             Core.openController("login").main()
         elif current_row == 1:
@@ -18,8 +19,10 @@ class HomeController(Controller):
         elif current_row == 2:
             Core.openController("information").main()
         elif current_row == 3:
-            ViewFactory.set_mode("gui")
-            Core.openController("home").main()
+            if ViewFactory.get_mode()== "gui":
+                subprocess.run(['python', 'console/main_console.py'])
+            else:
+                subprocess.run(['python', 'gui/main_gui.py'])
         else:
             quit()
 

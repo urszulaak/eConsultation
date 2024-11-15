@@ -12,19 +12,19 @@ class LoginController(Controller):
         self.loginView = self.loadView("login")
         self.usersModel = UsersModel()
 
-    def _logged(self, fields):
-        response = self.usersModel._logged(fields)
+    def logged(self, fields):
+        response = self.usersModel.logged(fields)
         if response != 0:
             Core.openController("userMenu",response).main()
         else:
             return 0
         
-    def _isTeacher(self, fields):
-        response = self.usersModel._isTeacher(fields)
+    def isTeacher(self, fields):
+        response = self.usersModel.isTeacher(fields)
         if response != 0:
             Core.openController("teacherMenu",response).main()
         else:
-            self._logged(fields)
+            self.logged(fields)
 
     def home(self):
         Core.openController("home").main()

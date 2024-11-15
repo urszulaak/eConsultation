@@ -17,7 +17,7 @@ class RegisterController(Controller):
             print("Error while adding")
             return False
 
-    def _added(self):
+    def added(self):
         Core.openController("login").main()
 
     def home(self):

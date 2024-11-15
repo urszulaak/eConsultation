@@ -9,6 +9,10 @@ class ViewFactory:
         ViewFactory._mode = mode
 
     @staticmethod
+    def get_mode():
+        return ViewFactory._mode
+
+    @staticmethod
     def load_view(view_name, controller, optional_param=None):
         view_class_name = view_name[0].upper() + view_name[1:] + "View"
 

@@ -21,20 +21,23 @@ class HomeView(View):
         self.info_button = tk.Button(self.window, text="Information", command=self.on_information)
         self.info_button.pack(pady=5)
 
+        self.info_button = tk.Button(self.window, text="Console", command=self.on_console)
+        self.info_button.pack(pady=5)
+
         self.quit_button = tk.Button(self.window, text="Quit", command=self.on_quit)
         self.quit_button.pack(pady=20)
 
     def on_login(self):
-        messagebox.showinfo("Login", "Navigating to Login Screen...")
-        self.controller.navigate_to("login")
+        pass
 
     def on_register(self):
-        messagebox.showinfo("Register", "Navigating to Register Screen...")
-        self.controller.navigate_to("register")
+        pass
 
     def on_information(self):
-        messagebox.showinfo("Information", "Navigating to Information Screen...")
-        self.controller.navigate_to("information")
+        pass
+
+    def on_console(self):
+        self.controller.menuChoice(4)
 
     def on_quit(self):
         self.window.quit()

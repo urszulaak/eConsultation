@@ -48,13 +48,9 @@ class ChooseConsultController(Controller):
 
     def form(self, current_teacher, selected_date, current_stamp, form, user):
         response = self.consultModel.addConsult(current_teacher, selected_date, current_stamp, form, user)
-        if response != 0:
-            print("Successfully added!")
-        else:
-            print("Error while adding")
         return response
 
-    def userHome(self):
+    def home(self):
         Core.openController("userMenu", self.response).main()
 
     def main(self):

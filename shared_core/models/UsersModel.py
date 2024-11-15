@@ -1,19 +1,20 @@
 import mysql.connector
+from mysql.connector import errors
 
 class UsersModel():
 
     def __init__(self):
-        self.db = mysql.connector.connect(
-            database="econsultationdb",
-            host="localhost",
-            user="root",
-            password="",
-            charset="utf8"
-        )
-        if self.db.is_connected():
-            print('Connected')
-        else:
-            print('not connected')
+        try:
+            self.db = mysql.connector.connect(
+                database="econsultationdb",
+                host="localhost",
+                user="root",
+                password="",
+                charset="utf8"
+            )
+        except errors.InterfaceError as e:
+            print('\033[31mBaza danych nie odpowiada! Sprawdź połączenie z bazą MySQL!\033[0m')
+            exit(1)
         self.c = self.db.cursor()
 
 
@@ -25,7 +26,6 @@ class UsersModel():
                 (fields[3],)
             )
             result = self.c.fetchone()
-            print(result)
             if not result:
                 self.c.execute(
                     "INSERT INTO users (FirstName, LastName, Login, Password) VALUES (%s, %s, %s, %s)",
@@ -44,7 +44,7 @@ class UsersModel():
             pass
         return result
 
-    def _logged(self,fields):
+    def logged(self,fields):
         response = 0
         result = None
         try:
@@ -61,7 +61,7 @@ class UsersModel():
             pass
         return response
     
-    def _isTeacher(self,fields):
+    def isTeacher(self,fields):
         response = 0
         result = None
         try:

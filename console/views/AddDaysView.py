@@ -1,7 +1,9 @@
 from shared_core.View import View
 import curses
 from curses import wrapper
-from curses.textpad import Textbox, rectangle
+import time
+from curses.textpad import Textbox
+from views.Custom import Custom
 
 class AddDaysView(View):
 
@@ -9,24 +11,19 @@ class AddDaysView(View):
         super().__init__()
         self.addDaysController = controller
         self.response = response
+        self.custom = Custom
 
     def _content(self, stdscr, current_day, days):
-        curses.curs_set(0)
         h, w = stdscr.getmaxyx()
-        menu_height = 10
-        curses.init_pair(1, curses.COLOR_BLUE, curses.COLOR_BLUE)
-        curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
-        curses.init_pair(3, curses.COLOR_CYAN, curses.COLOR_BLACK)
-        curses.init_pair(4, curses.COLOR_RED, curses.COLOR_RED)
-        curses.init_pair(5, curses.COLOR_WHITE, curses.COLOR_BLUE)
-        curses.init_pair(6, curses.COLOR_GREEN, curses.COLOR_BLACK)
-        curses.init_pair(7, curses.COLOR_WHITE, curses.COLOR_GREEN)
-        line = "Choose day [ctrl + E - exit]"
-        stdscr.attron(curses.color_pair(3))
-        stdscr.addstr(menu_height + 1, w // 2 - (len(line) // 2), line)
-        stdscr.attroff(curses.color_pair(3))
+        self.custom.clearContent(stdscr)
+        self.custom.initialize_colors(stdscr)
+        curses.curs_set(0)
+        menu_height = 11
+        exit = "[ctrl + E - exit]"
+        line = "Choose day"
+        stdscr.addstr(menu_height + 1, w // 2 - (len(line+exit) // 2), line,curses.color_pair(4))
+        stdscr.addstr(menu_height + 1, w // 2 - (len(line+exit) // 2)+len(line)+1, exit,curses.color_pair(5))
         days = self.addDaysController._getDays()
-        stdscr.attron(curses.color_pair(3))
         available_width = w // len(days)
         for i, day in enumerate(days):
             x_position = available_width * i
@@ -48,12 +45,15 @@ class AddDaysView(View):
     def _timeStamps(self, stdscr, current_stamp, time_stamps, selected):
         h, w = stdscr.getmaxyx()
         menu_height = 16
-        available_height = h - menu_height - 1
         available_width = w // 7
-        line = "Choose time stamps [S - save, C - cancel]"
-        stdscr.attron(curses.color_pair(3))
-        stdscr.addstr(menu_height + 1, w // 2 - (len(line) // 2), line)
-        stdscr.attroff(curses.color_pair(3))
+        line = "Choose time stamps ["
+        save = "S - save,"
+        cancel = " C - cancel"
+        sign = "]"
+        stdscr.addstr(menu_height + 1, w // 2 - (len(line+save+cancel+sign) // 2), line,curses.color_pair(4))
+        stdscr.addstr(menu_height + 1, w // 2 - (len(line+save+cancel+sign) // 2)+len(line), save,curses.color_pair(8))
+        stdscr.addstr(menu_height + 1, w // 2 - (len(line+save+cancel+sign) // 2)+len(line+save), cancel,curses.color_pair(5))
+        stdscr.addstr(menu_height + 1, w // 2 - (len(line+save+cancel+sign) // 2)+len(line+save+cancel), sign,curses.color_pair(4))
         id = 0
         for i, stamp in enumerate(time_stamps):
             if i == 7:
@@ -98,13 +98,12 @@ class AddDaysView(View):
             elif key == curses.KEY_ENTER or key in [10, 13]:
                 self._moveStamps(stdscr, current_day)
             elif key == 5:
-                self._clearContent(stdscr)
                 self.addDaysController._teacherHome()
             self._content(stdscr, current_day, days)
 
     def _moveStamps(self, stdscr, current_day):
         current_stamp=0
-        selected = self.addDaysController.ifAdded(self.response, current_day)
+        selected = arr = [x - 1 for x in self.addDaysController.ifAdded(self.response, current_day)]
         time_stamps = self.addDaysController._getTimeStamps()
         self._timeStamps(stdscr, current_stamp, time_stamps, selected)
         while 1:
@@ -124,31 +123,16 @@ class AddDaysView(View):
                 selected.append(current_stamp)
             elif key in [ord('s'), ord('c')]:
                 if key == ord('s'):
+                    success = "\u2705 SUCCESSFULLY ADDED! \u2705"
+                    success2 = "    SUCCESSFULLY ADDED!    "
+                    self.custom.message(stdscr,success, success2,1)
                     self.addDaysController._saveTimeStamps(selected, current_day, self.response)
-                    self._clearPart(stdscr)
-                    self._move(stdscr)
+                    self.custom.clearContent(stdscr,17)
+                    self._move(stdscr,17)
                 elif key == ord('c'):
-                    self._clearPart(stdscr)
+                    self.custom.clearContent(stdscr,17)
                     self._move(stdscr)
             self._timeStamps(stdscr, current_stamp, time_stamps, selected)
-
-    def _clearPart(self, stdscr):
-        h, w = stdscr.getmaxyx()
-        start_y = 17
-        end_y = h
-        for i in range(start_y, end_y):
-            stdscr.move(i, 0)
-            stdscr.clrtoeol()
-        stdscr.refresh()
-
-    def _clearContent(self, stdscr):
-        h, w = stdscr.getmaxyx()
-        start_y = 11
-        end_y = h
-        for i in range(start_y, end_y):
-            stdscr.move(i, 0)
-            stdscr.clrtoeol()
-        stdscr.refresh()
 
     def main(self):
         wrapper(self._move)

@@ -32,11 +32,7 @@ class AddDaysController(Controller):
     def _saveTimeStamps(self, selected, current_day, user):
         self.timeStampsModel.delStamps(current_day, user)
         for select in selected:
-            response = self.timeStampsModel._saveTime(select, current_day, user)
-            if response != 0:
-                print("Successfully added!")
-            else:
-                print("Error while adding")
+            self.timeStampsModel._saveTime(select, current_day, user)
 
     def ifAdded(self, current_teacher, current_day):
         return self.timeStampsModel._stampsID(current_teacher, current_day)

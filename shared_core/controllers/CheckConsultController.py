@@ -17,7 +17,7 @@ class CheckConsultController(Controller):
         response = self.consultModel.consults(self.response)
         return response
     
-    def teacherHome(self):
+    def home(self):
         Core.openController("teacherMenu", self.response).main()
 
     def main(self):

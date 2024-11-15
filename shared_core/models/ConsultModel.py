@@ -1,20 +1,21 @@
 import mysql.connector
 from datetime import datetime
+from mysql.connector import errors
 
 class ConsultModel():
 
     def __init__(self):
-        self.db = mysql.connector.connect(
-            database="econsultationdb",
-            host="localhost",
-            user="root",
-            password="",
-            charset="utf8"
-        )
-        if self.db.is_connected():
-            print('Connected')
-        else:
-            print('not connected')
+        try:
+            self.db = mysql.connector.connect(
+                database="econsultationdb",
+                host="localhost",
+                user="root",
+                password="",
+                charset="utf8"
+            )
+        except errors.InterfaceError as e:
+            print('\033[31mBaza danych nie odpowiada! Sprawdź połączenie z bazą MySQL!\033[0m')
+            exit(1)
         self.c = self.db.cursor()
 
     def addConsult(self, current_teacher, selected_date, current_stamp, form, user):
@@ -48,7 +49,7 @@ class ConsultModel():
                 consultation = f"Date: {row[0]} Time: {row[5]} Student: {row[1]} {row[2]} Topic: {row[3]} Description: {row[4]}"
                 unique_ids.append([consultation])
         except Exception as e:
-            print(f"Error: {e}")
+            pass
 
         return unique_ids
     
@@ -70,9 +71,9 @@ class ConsultModel():
             results = self.c.fetchall()
 
             for row in results:
-                consultation = f"Date: {row[0]} Time: {row[5]} Teacher: {row[1]} {row[2]} Topic: {row[3]} Description: {row[4]}"
+                consultation = f"Date: {row[0]} | Time: {row[5]} | Teacher: {row[1]} {row[2]} | Topic: {row[3]} | Description: {row[4]}"
                 unique_ids.append([consultation])
         except Exception as e:
-            print(f"Error: {e}")
+            pass
 
         return unique_ids
