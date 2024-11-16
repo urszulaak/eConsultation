@@ -15,4 +15,4 @@ Tutoral to connect db:
 
 4. In browse conncet with: http://localhost/phpmyadmin/
 
-5. Import database: Soon I will add the file
+5. Import database from econsultationdb.sql
