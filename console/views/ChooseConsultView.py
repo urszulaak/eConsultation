@@ -51,21 +51,7 @@ class ChooseConsultView(View):
             no_consult_found2 = "    NO TEACHERS FOUND!    "
             self.custom.message(stdscr, no_consult_found, no_consult_found2, 0)
             self.chooseConsultController.home()
-        available_width = w // len(teachers)
-        for i, teacher in enumerate(teachers):
-            x_position = available_width * i
-            win_day = curses.newwin(5, available_width, menu_height+2, x_position)
-            win_day.attron(curses.color_pair(4))
-            win_day.box()
-            win_day.attroff(curses.color_pair(4))
-            text = str(teacher)
-            text_x = (available_width - len(text)) // 2
-            text_y = 5 // 2
-            if i == current_teacher:
-                win_day.addstr(text_y, text_x, str(teacher),curses.color_pair(3))
-            else:
-                win_day.addstr(text_y, text_x, str(teacher))
-            win_day.refresh()
+            self.custom.row(stdscr, teachers, menu_height, current_teacher)
 
     def draw_calendar(self, stdscr, year, month, daysID, selected_day=None, selected_week=None):
         h, w = stdscr.getmaxyx()
@@ -126,23 +112,7 @@ class ChooseConsultView(View):
         stdscr.addstr(menu_height + 1, w // 2 - (len(line+cancel+line2) // 2), line,curses.color_pair(4))
         stdscr.addstr(menu_height + 1, w // 2 - (len(line+cancel+line2) // 2)+len(line)+1, cancel,curses.color_pair(5))
         stdscr.addstr(menu_height + 1, w // 2 - (len(line+cancel+line2) // 2)+len(line+cancel)+1, line2,curses.color_pair(4))
-        available_width = w // len(stamps)
-        for i, stamp in enumerate(stamps):
-            x_position = available_width * i
-            win_stamp = curses.newwin(5, available_width, menu_height + 3, x_position)
-            win_stamp.attron(curses.color_pair(4))
-            win_stamp.box()
-            win_stamp.attroff(curses.color_pair(4))
-            text = str(stamp)
-            text_x = (available_width - len(text)) // 2
-            text_y = 5 // 2
-            if i == current_stamp:
-                win_stamp.attron(curses.color_pair(3))
-                win_stamp.addstr(text_y, text_x, str(stamp))
-                win_stamp.attroff(curses.color_pair(3))
-            else:
-                win_stamp.addstr(text_y, text_x, str(stamp))
-            win_stamp.refresh()
+        self.custom.row(stdscr, stamps, menu_height, current_stamp)
 
     def _form(self, stdscr):
         curses.curs_set(1)
