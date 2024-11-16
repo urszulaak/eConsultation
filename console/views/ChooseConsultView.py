@@ -70,16 +70,23 @@ class ChooseConsultView(View):
     def draw_calendar(self, stdscr, year, month, daysID, selected_day=None, selected_week=None):
         h, w = stdscr.getmaxyx()
         menu_height = 18
-        line = "Choose available month and [Enter - select month and then day, C - cancel]"
+        line = "Choose available month and ["
+        enter = "Enter - select month and then day"
+        cancel = " C - cancel"
+        sign = "]"
         self.custom.clearContent(stdscr,18)
-        stdscr.addstr(menu_height, w // 2 - (len(line) // 2), line,curses.color_pair(4))
+        stdscr.addstr(menu_height + 1, w // 2 - (len(line+enter+cancel+sign) // 2), line,curses.color_pair(4))
+        stdscr.addstr(menu_height + 1, w // 2 - (len(line+enter+cancel+sign) // 2)+len(line), enter,curses.color_pair(8))
+        stdscr.addstr(menu_height + 1, w // 2 - (len(line+enter+cancel+sign) // 2)+len(line+enter), cancel,curses.color_pair(5))
+        stdscr.addstr(menu_height + 1, w // 2 - (len(line+enter+cancel+sign) // 2)+len(line+enter+cancel), sign,curses.color_pair(4))
+
         menu_height = 20
         title = f"\u2B9C {calendar.month_name[month]} {year} \u2B9E"
         stdscr.addstr(menu_height, w//2 - (len(title) // 2), title, curses.color_pair(3))
 
         days = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
         for i, day in enumerate(days):
-            stdscr.addstr(menu_height+2, (w//2-15) + i * 4 + 2, day,curses.color_pair(4))
+            stdscr.addstr(menu_height+1, (w//2-15) + i * 4 + 2, day,curses.color_pair(4))
 
         cal = calendar.monthcalendar(year, month)
         self.fetch_holidays(year)
@@ -104,7 +111,7 @@ class ChooseConsultView(View):
                 else:
                     stdscr.attron(color)
 
-                stdscr.addstr(menu_height + 2 + start_y, (w // 2 - 15) + day_idx * 4 + 2, str(day).rjust(2))
+                stdscr.addstr(menu_height + 1 + start_y, (w // 2 - 15) + day_idx * 4 + 2, str(day).rjust(2))
                 stdscr.attroff(curses.color_pair(8) | curses.color_pair(11) | curses.A_BOLD)
 
             start_y += 1
@@ -113,8 +120,12 @@ class ChooseConsultView(View):
     def _stamps(self, stdscr, stamps, current_stamp):
         h, w = stdscr.getmaxyx()
         menu_height = 27
-        line = "Choose available time [C - cancel]"
-        stdscr.addstr(menu_height + 2, w // 2 - (len(line) // 2), line,curses.color_pair(4))
+        line = "Choose available time ["
+        cancel = "C - cancel"
+        line2 = "]"
+        stdscr.addstr(menu_height + 1, w // 2 - (len(line+cancel+line2) // 2), line,curses.color_pair(4))
+        stdscr.addstr(menu_height + 1, w // 2 - (len(line+cancel+line2) // 2)+len(line)+1, cancel,curses.color_pair(5))
+        stdscr.addstr(menu_height + 1, w // 2 - (len(line+cancel+line2) // 2)+len(line+cancel)+1, line2,curses.color_pair(4))
         available_width = w // len(stamps)
         for i, stamp in enumerate(stamps):
             x_position = available_width * i
@@ -234,7 +245,9 @@ class ChooseConsultView(View):
             elif key == curses.KEY_ENTER or key in [10, 13]:
                 current_stamp = stampsID[current_stamp]
                 form = self._form(stdscr)
-                if self.chooseConsultController.form(current_teacher, selected_date, current_stamp, form, self.response) != 0:
+                if form == -1:
+                    self.chooseConsultController.home()
+                elif self.chooseConsultController.form(current_teacher, selected_date, current_stamp, form, self.response) != 0:
                     booked = "\u2705 SUCCESSFULLY BOOKED! \u2705"
                     booked2 = "   SUCCESSFULLY BOOKED!   "
                     self.custom.message(stdscr, booked, booked2, 1)

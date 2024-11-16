@@ -150,3 +150,40 @@ class Custom():
                         box.do_command(key)
                     win_text.refresh()
         return fields
+    
+    def row(stdscr, content, menu_height, current, selected=None, more=None):
+        h, w = stdscr.getmaxyx()
+        id=0
+        if more:
+            available_width = w // 7
+        else:
+            available_width = w // len(content)
+        for i, element in enumerate(content):
+            if more:
+                if i == 7:
+                    id = 0
+                    menu_height += 6
+                x_position = available_width * id
+            else:
+                x_position = available_width * i
+            win_block = curses.newwin(5, available_width, menu_height+2, x_position)
+            win_block.attron(curses.color_pair(4))
+            win_block.box()
+            win_block.attroff(curses.color_pair(4))
+            text = str(element)
+            text_x = (available_width - len(text)) // 2
+            text_y = 5 // 2
+            if i == current:
+                win_block.addstr(text_y, text_x, str(element),curses.color_pair(3))
+            else:
+                win_block.addstr(text_y, text_x, str(element))
+            if more:
+                if i in selected:
+                    win_block.attron(curses.color_pair(8))
+                    win_block.box()
+                    win_block.addstr(text_y, text_x, str(element))
+                    win_block.attroff(curses.color_pair(8))
+                    if i == current:
+                        win_block.addstr(text_y, text_x, str(element),curses.color_pair(9))
+                id+=1
+            win_block.refresh()
