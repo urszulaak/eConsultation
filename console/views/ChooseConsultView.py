@@ -50,7 +50,7 @@ class ChooseConsultView(View):
             no_consult_found = "\u274c NO TEACHERS FOUND! \u274c"
             no_consult_found2 = "    NO TEACHERS FOUND!    "
             self.custom.message(stdscr, no_consult_found, no_consult_found2, 0)
-            self.checkUConsultController.home()
+            self.chooseConsultController.home()
         available_width = w // len(teachers)
         for i, teacher in enumerate(teachers):
             x_position = available_width * i

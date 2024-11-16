@@ -25,10 +25,10 @@ class CheckBaseConsultView(View):
         stdscr.attroff(curses.color_pair(2))
         menu_height = 13
         if not content:
-            no_consult_found = "\u274c NO CONSULT FOUND! \u274c"
-            no_consult_found2 = "    NO CONSULT FOUND!    "
+            no_consult_found = "\u274c NO CONSULTS FOUND! \u274c"
+            no_consult_found2 = "    NO CONSULTS FOUND!    "
             self.custom.message(stdscr, no_consult_found, no_consult_found2, 0)
-            self.checkUConsultController.home()
+            self.controller.home()
         box_height = (h - menu_height - 2) // visible_items
         box_width = w - 2
 
