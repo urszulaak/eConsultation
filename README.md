@@ -6,6 +6,9 @@ Necessary libs:
 - msql-connector
   pip install mysql-connector-python
 
+- requests
+  pip install requests
+
 Tutoral to connect db:
 
 1. Download XAMPP https://www.apachefriends.org/pl/download.html
