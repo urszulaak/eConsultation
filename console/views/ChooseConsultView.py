@@ -46,6 +46,7 @@ class ChooseConsultView(View):
         stdscr.addstr(menu_height + 1, w // 2 - (len(line+exit) // 2), line,curses.color_pair(4))
         stdscr.addstr(menu_height + 1, w // 2 - (len(line+exit) // 2)+len(line)+1, exit,curses.color_pair(5))
         menu_height = 11
+        self.custom.row(stdscr, teachers, menu_height, current_teacher)
         if not teachers:
             no_consult_found = "\u274c NO TEACHERS FOUND! \u274c"
             no_consult_found2 = "    NO TEACHERS FOUND!    "

@@ -25,21 +25,6 @@ class AddDaysView(View):
         stdscr.addstr(menu_height + 1, w // 2 - (len(line+exit) // 2)+len(line)+1, exit,curses.color_pair(5))
         days = self.addDaysController._getDays()
         self.custom.row(stdscr, days, menu_height, current_day)
-        # available_width = w // len(days)
-        # for i, day in enumerate(days):
-        #     x_position = available_width * i
-        #     win_day = curses.newwin(5, available_width, menu_height+2, x_position)
-        #     win_day.attron(curses.color_pair(4))
-        #     win_day.box()
-        #     win_day.attroff(curses.color_pair(4))
-        #     text = str(day)
-        #     text_x = (available_width - len(text)) // 2
-        #     text_y = 5 // 2
-        #     if i == current_day:
-        #         win_day.addstr(text_y, text_x, str(day),curses.color_pair(3))
-        #     else:
-        #         win_day.addstr(text_y, text_x, str(day))
-        #     win_day.refresh()
 
     def _timeStamps(self, stdscr, current_stamp, time_stamps, selected):
         h, w = stdscr.getmaxyx()
@@ -55,31 +40,6 @@ class AddDaysView(View):
         stdscr.addstr(menu_height + 1, w // 2 - (len(line+save+cancel+sign) // 2)+len(line+save+cancel), sign,curses.color_pair(4))
         id = 0
         self.custom.row(stdscr, time_stamps, menu_height, current_stamp, selected, 1)
-        # for i, stamp in enumerate(time_stamps):
-        #     if i == 7:
-        #         id = 0
-        #         menu_height += 6
-        #     x_position = available_width * id
-        #     win_day = curses.newwin(5, available_width, menu_height + 2, x_position)
-        #     win_day.attron(curses.color_pair(4))
-        #     win_day.box()
-        #     win_day.attroff(curses.color_pair(4))
-        #     text = str(stamp)
-        #     text_x = (available_width - len(text)) // 2
-        #     text_y = 5 // 2
-        #     if i == current_stamp:
-        #         win_day.addstr(text_y, text_x, str(stamp),curses.color_pair(3))
-        #     else:
-        #         win_day.addstr(text_y, text_x, str(stamp))
-        #     if i in selected:
-        #         win_day.attron(curses.color_pair(8))
-        #         win_day.box()
-        #         win_day.addstr(text_y, text_x, str(stamp))
-        #         win_day.attroff(curses.color_pair(8))
-        #         if i == current_stamp:
-        #             win_day.addstr(text_y, text_x, str(stamp),curses.color_pair(9))
-        #     id += 1
-        #     win_day.refresh()
 
     def _move(self, stdscr):
         current_day = 0
