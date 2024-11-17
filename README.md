@@ -16,6 +16,8 @@ Tutoral to connect db:
 3. Run Apache and MySQL
 ![image](https://github.com/user-attachments/assets/d6c1ac41-90d6-4032-b7d7-1676dd2a51c5)
 
-4. In browse conncet with: http://localhost/phpmyadmin/
+4. In browser conncet with: http://localhost/phpmyadmin/
+  
+6. In console write: CREATE DATABASE econsultationdb
 
-5. Import database from econsultationdb.sql
+7. Import to created database file: econsultationdb.sql
