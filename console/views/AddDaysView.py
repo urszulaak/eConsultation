@@ -77,6 +77,8 @@ class AddDaysView(View):
                 selected.remove(current_stamp)
             elif key == curses.KEY_ENTER or key in [10, 13]:
                 selected.append(current_stamp)
+            elif key == 5:
+                self.addDaysController._teacherHome()
             elif key in [ord('s'), ord('c')]:
                 if key == ord('s'):
                     success = "\u2705 SUCCESSFULLY ADDED! \u2705"

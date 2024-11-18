@@ -111,8 +111,8 @@ class ChooseConsultView(View):
         cancel = "C - cancel"
         line2 = "]"
         stdscr.addstr(menu_height + 1, w // 2 - (len(line+cancel+line2) // 2), line,curses.color_pair(4))
-        stdscr.addstr(menu_height + 1, w // 2 - (len(line+cancel+line2) // 2)+len(line)+1, cancel,curses.color_pair(5))
-        stdscr.addstr(menu_height + 1, w // 2 - (len(line+cancel+line2) // 2)+len(line+cancel)+1, line2,curses.color_pair(4))
+        stdscr.addstr(menu_height + 1, w // 2 - (len(line+cancel+line2) // 2)+len(line), cancel,curses.color_pair(5))
+        stdscr.addstr(menu_height + 1, w // 2 - (len(line+cancel+line2) // 2)+len(line+cancel), line2,curses.color_pair(4))
         self.custom.row(stdscr, stamps, menu_height, current_stamp)
 
     def _form(self, stdscr):
@@ -158,6 +158,8 @@ class ChooseConsultView(View):
             elif key == ord("c"):
                 self.custom.clearContent(stdscr, 18)
                 self._moveTeacher(stdscr)
+            elif key == 5:
+                self.chooseConsultController.home()
             elif key == curses.KEY_ENTER or key in [10, 13]:
                 self._navigate_days(stdscr, year, month, daysID, current_teacher)
 
@@ -190,6 +192,8 @@ class ChooseConsultView(View):
                 selected_week = (selected_week + 1) % len(cal)
             elif key == curses.KEY_UP:
                 selected_week = (selected_week - 1) % len(cal)
+            elif key == 5:
+                self.chooseConsultController.home()
             elif key == curses.KEY_ENTER or key in [10, 13]:
                 day = cal[selected_week][selected_day]
                 day_date = datetime(year, month, day).date()
@@ -213,6 +217,8 @@ class ChooseConsultView(View):
                 current_stamp -= 1
             elif key == curses.KEY_RIGHT and current_stamp < len(stamps) - 1:
                 current_stamp += 1
+            elif key == 5:
+                self.chooseConsultController.home()
             elif key == curses.KEY_ENTER or key in [10, 13]:
                 current_stamp = stampsID[current_stamp]
                 form = self._form(stdscr)

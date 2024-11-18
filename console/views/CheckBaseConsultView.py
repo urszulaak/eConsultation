@@ -66,33 +66,30 @@ class CheckBaseConsultView(View):
         win_y, win_x = h // 2 - win_height // 2, w // 2 - win_width // 2
 
         win = curses.newwin(win_height, win_width, win_y, win_x)
-        curses.curs_set(0)  # Ukrycie kursora
-        win.keypad(True)  # Umożliwienie obsługi klawiszy specjalnych
+        curses.curs_set(0)
+        win.keypad(True)
         win.box()
 
         question = "Do you really want to delete?"
         yes_option = "Yes"
         no_option = "No"
 
-        current_option = 0  # 0 = Yes, 1 = No
+        current_option = 0
 
         while True:
-            # Czyszczenie i ponowne rysowanie okienka
             win.clear()
             win.box()
             win.addstr(2, win_width // 2 - len(question) // 2, question)
 
-            # Zaznaczenie opcji
             if current_option == 0:
-                win.addstr(4, win_width // 4, yes_option, curses.color_pair(3))
-                win.addstr(4, 3 * win_width // 4 - len(no_option), no_option)
+                win.addstr(4, win_width // 4, yes_option, curses.color_pair(9))
+                win.addstr(4, 3 * win_width // 4 - len(no_option), no_option, curses.color_pair(5))
             else:
-                win.addstr(4, win_width // 4, yes_option)
-                win.addstr(4, 3 * win_width // 4 - len(no_option), no_option, curses.color_pair(3))
+                win.addstr(4, win_width // 4, yes_option, curses.color_pair(8))
+                win.addstr(4, 3 * win_width // 4 - len(no_option), no_option, curses.color_pair(7))
 
             win.refresh()
 
-            # Odczytanie klawisza od użytkownika
             key = win.getch()
 
             if key == curses.KEY_LEFT:
