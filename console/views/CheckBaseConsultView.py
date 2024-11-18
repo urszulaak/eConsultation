@@ -71,7 +71,7 @@ class CheckBaseConsultView(View):
         win.box()
 
         question = "Do you really want to delete?"
-        yes_option = "Yes"
+        yes_option = "Delete"
         no_option = "No"
 
         current_option = 0
@@ -82,11 +82,11 @@ class CheckBaseConsultView(View):
             win.addstr(2, win_width // 2 - len(question) // 2, question)
 
             if current_option == 0:
-                win.addstr(4, win_width // 4, yes_option, curses.color_pair(9))
-                win.addstr(4, 3 * win_width // 4 - len(no_option), no_option, curses.color_pair(5))
+                win.addstr(4, win_width // 4, yes_option, curses.color_pair(7))
+                win.addstr(4, 3 * win_width // 4 - len(no_option), no_option, curses.color_pair(11))
             else:
-                win.addstr(4, win_width // 4, yes_option, curses.color_pair(8))
-                win.addstr(4, 3 * win_width // 4 - len(no_option), no_option, curses.color_pair(7))
+                win.addstr(4, win_width // 4, yes_option, curses.color_pair(5))
+                win.addstr(4, 3 * win_width // 4 - len(no_option), no_option, curses.color_pair(12))
 
             win.refresh()
 
@@ -96,6 +96,9 @@ class CheckBaseConsultView(View):
                 current_option = 0
             elif key == curses.KEY_RIGHT:
                 current_option = 1
+            elif key == 5:
+                current_option = 1
+                return current_option
             elif key == curses.KEY_ENTER or key in [10, 13]:
                 return current_option
 
