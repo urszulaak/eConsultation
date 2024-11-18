@@ -17,6 +17,9 @@ class CheckUConsultController(Controller):
         response = self.consultModel.consultsU(self.response)
         return response
     
+    def delete_consult(self, consult_id):
+        self.consultModel.delete_by_id(consult_id)
+    
     def home(self):
         Core.openController("userMenu", self.response).main()
 

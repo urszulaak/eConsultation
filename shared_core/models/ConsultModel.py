@@ -29,12 +29,11 @@ class ConsultModel():
             pass
 
     def consults(self, current_teacher):
-        unique_ids = []
         try:
             today = datetime.today().date()
 
             self.c.execute("""
-            SELECT c.C_Date, u.LastName, u.FirstName, c.Title, c.Description, t.Stamp 
+            SELECT c.ID, c.C_Date, u.LastName, u.FirstName, c.Title, c.Description, t.Stamp 
             FROM consult AS c
             JOIN users AS u ON c.ID_users = u.ID
             JOIN time_stamps AS t ON c.ID_stamp = t.ID
@@ -44,22 +43,25 @@ class ConsultModel():
         """, (current_teacher, today))
 
             results = self.c.fetchall()
-
-            for row in results:
-                consultation = f"Date: {row[0]} Time: {row[5]} Student: {row[1]} {row[2]} Topic: {row[3]} Description: {row[4]}"
-                unique_ids.append([consultation])
-        except Exception as e:
+        except Exception:
             pass
 
-        return unique_ids
+        return results
+    
+    def delete_by_id(self, consult_id):
+        try:
+            self.c.execute("DELETE FROM consult WHERE ID = %s", (consult_id,))
+            self.db.commit()
+            return True
+        except Exception:
+            return False
     
     def consultsU(self, current_user):
-        unique_ids = []
         try:
             today = datetime.today().date()
 
             self.c.execute("""
-            SELECT c.C_Date, u.LastName, u.FirstName, c.Title, c.Description, t.Stamp 
+            SELECT c.ID, c.C_Date, u.LastName, u.FirstName, c.Title, c.Description, t.Stamp 
             FROM consult AS c
             JOIN users AS u ON c.ID_teachers = u.ID
             JOIN time_stamps AS t ON c.ID_stamp = t.ID
@@ -69,11 +71,7 @@ class ConsultModel():
         """, (current_user, today))
 
             results = self.c.fetchall()
-
-            for row in results:
-                consultation = f"Date: {row[0]} | Time: {row[5]} | Teacher: {row[1]} {row[2]} | Topic: {row[3]} | Description: {row[4]}"
-                unique_ids.append([consultation])
-        except Exception as e:
+        except Exception:
             pass
 
-        return unique_ids
+        return results
