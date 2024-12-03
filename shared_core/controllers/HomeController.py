@@ -1,5 +1,6 @@
 import sys
 import os
+import signal
 import subprocess
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from shared_core.Controller import Controller
@@ -19,7 +20,7 @@ class HomeController(Controller):
         elif current_row == 2:
             Core.openController("information").main()
         elif current_row == 3:
-            if ViewFactory.get_mode()== "gui":
+            if ViewFactory.get_mode() == "gui":
                 subprocess.run(['python', 'console/main_console.py'])
             else:
                 subprocess.run(['python', 'gui/main_gui.py'])

@@ -1,5 +1,6 @@
 import abc
 import importlib
+from shared_core.ViewFactory import ViewFactory
 
 class Controller(metaclass=abc.ABCMeta):
 
@@ -8,12 +9,4 @@ class Controller(metaclass=abc.ABCMeta):
         return
 
     def loadView(self, view, optional_param=None):
-        response = None
-        
-        viewName = view[0].upper()+view[1:]+"View"
-
-        module = importlib.import_module("views."+viewName)
-        class_ = getattr(module, viewName)
-        response = class_(self, optional_param)
-        
-        return response
+        return ViewFactory.load_view(view, self, optional_param)
