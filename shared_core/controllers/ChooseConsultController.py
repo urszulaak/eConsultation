@@ -12,11 +12,11 @@ from models.ConsultModel import ConsultModel
 class ChooseConsultController(Controller):
 
     def __init__(self,response=None):
-        self.chooseConsultView = self.loadView("chooseConsult", response)
+        self.response = response
         self.timeStampsModel = TimeStampsModel()
         self.usersModel = UsersModel()
         self.consultModel = ConsultModel()
-        self.response = response
+        self.chooseConsultView = self.loadView("chooseConsult", response)
 
     def _getTeachersID(self):
         teachersID = self.timeStampsModel._teachersID()
@@ -36,6 +36,7 @@ class ChooseConsultController(Controller):
 
     def getStampsID(self, current_teacher, selected_day):
         stampsID = self.timeStampsModel._stampsID(current_teacher, selected_day)
+        print(f"Debug: StampsID for teacher {current_teacher}, day {selected_day}: {stampsID}")
         return stampsID
 
     def getStamps(self, current_teacher, selected_day):

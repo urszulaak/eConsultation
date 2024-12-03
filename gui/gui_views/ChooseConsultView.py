@@ -167,7 +167,7 @@ class ChooseConsultView(View):
                     day_btn = tk.Button(
                         calendar_grid,
                         text=str(day),
-                        command=lambda d=day: self.select_date(d),
+                        command=lambda d=day, idx=day_idx: self.select_date(d, idx),
                         bg='#4CAF50',
                         fg='white',
                         **day_btn_style
@@ -202,12 +202,12 @@ class ChooseConsultView(View):
 
         return date in self.holidays.get(year, set())
 
-    def select_date(self, day):
+    def select_date(self, day, day_idx):
         now = datetime.now()
         self.selected_date = f"{now.year}-{now.month:02d}-{day:02d}"
-        self.load_timestamps(day - 1)
+        self.load_timestamps(day, day_idx)
 
-    def load_timestamps(self, day_idx):
+    def load_timestamps(self, day, day_idx):
         # Clear previous content
         for widget in self.content_frame.winfo_children():
             widget.destroy()
@@ -242,7 +242,7 @@ class ChooseConsultView(View):
 
     def select_timestamp(self, stamp_id):
         self.selected_stamp = stamp_id
-        self.next_btn.config(state=tk.NORMAL)
+        self.load_form()
 
     def load_form(self):
         # Clear previous content
@@ -286,9 +286,6 @@ class ChooseConsultView(View):
         elif self.current_step == 'calendar':
             # Timestamp selection
             self.load_timestamps(int(self.selected_date.split('-')[2]) - 1)
-        elif self.current_step == 'timestamps':
-            # Form
-            self.load_form()
         elif self.current_step == 'form':
             # Submit consultation
             topic = self.topic_entry.get()
