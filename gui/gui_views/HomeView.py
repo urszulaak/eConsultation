@@ -10,7 +10,7 @@ class HomeView(View):
         Custom.clear_window(self.window)
 
         self.window.title("System Home")
-        self.window.geometry("500x600")
+        self.window.geometry("1100x600")
         self.window.configure(bg='#f0f0f0')
 
         # Create main frame

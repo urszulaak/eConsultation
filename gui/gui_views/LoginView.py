@@ -10,23 +10,19 @@ class LoginView(View):
         Custom.clear_window(self.window)
 
         self.window.title("User Login")
-        self.window.geometry("500x600")
+        self.window.geometry("1100x600")
         self.window.configure(bg='#f0f0f0')
 
-        # Main frame
         main_frame = tk.Frame(self.window, bg='#f0f0f0')
         main_frame.pack(expand=True, fill='both', padx=20, pady=20)
 
-        # Title
         title_font = font.Font(family="Helvetica", size=24, weight="bold")
         title_label = tk.Label(main_frame, text="Login", font=title_font, bg='#f0f0f0', fg='#333333')
         title_label.pack(pady=(0, 30))
 
-        # Input style
         input_font = font.Font(family="Helvetica", size=12)
         label_font = font.Font(family="Helvetica", size=10)
 
-        # Input fields
         input_fields = [
             ("Login:", "login", False),
             ("Password:", "password", True)

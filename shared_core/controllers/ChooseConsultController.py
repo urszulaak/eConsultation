@@ -36,7 +36,6 @@ class ChooseConsultController(Controller):
 
     def getStampsID(self, current_teacher, selected_day):
         stampsID = self.timeStampsModel._stampsID(current_teacher, selected_day)
-        print(f"Debug: StampsID for teacher {current_teacher}, day {selected_day}: {stampsID}")
         return stampsID
 
     def getStamps(self, current_teacher, selected_day):

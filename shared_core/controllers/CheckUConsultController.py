@@ -9,9 +9,9 @@ from models.ConsultModel import ConsultModel
 class CheckUConsultController(Controller):
 
     def __init__(self,response=None):
-        self.checkUConsultView = self.loadView("checkUConsult", response)
-        self.consultModel = ConsultModel()
         self.response = response
+        self.consultModel = ConsultModel()
+        self.checkUConsultView = self.loadView("checkUConsult", response)
 
     def getConsult(self):
         response = self.consultModel.consultsU(self.response)

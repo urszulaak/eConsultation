@@ -10,10 +10,10 @@ from models.TimeStampsModel import TimeStampsModel
 class AddDaysController(Controller):
 
     def __init__(self,response=None):
-        self.addDaysView = self.loadView("addDays", response)
-        self.daysModel = DaysModel()
-        self.timeStampsModel = TimeStampsModel()
         self.response = response
+        self.timeStampsModel = TimeStampsModel()
+        self.daysModel = DaysModel()
+        self.addDaysView = self.loadView("addDays", response)
 
     def _getDays(self):
         days = []

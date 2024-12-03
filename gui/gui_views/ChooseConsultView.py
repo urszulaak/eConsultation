@@ -20,7 +20,7 @@ class ChooseConsultView(View):
         self.selected_stamp = None
 
         self.window.title("Choose Consultation")
-        self.window.geometry("700x800")
+        self.window.geometry("1100x800")
         self.window.configure(bg='#f0f0f0')
 
         # Main frame
