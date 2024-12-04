@@ -60,18 +60,17 @@ class HomeView(View):
         self.homeController.menuChoice(0)
 
     def on_register(self):
-        from gui_views.RegisterView import RegisterView
-        RegisterView(self.homeController)
+        self.homeController.menuChoice(1)
 
     def on_information(self):
         self.homeController.menuChoice(2)
 
     def on_console(self):
-        self.window.quit()
+        self.window.destroy()
         self.homeController.menuChoice(3)
 
     def on_quit(self):
-        self.window.quit()
+        self.window.destroy()
 
     def main(self):
         self.window.mainloop()

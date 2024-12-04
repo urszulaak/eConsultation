@@ -68,10 +68,10 @@ class LoginView(View):
 
         # Check login and handle different scenarios
         self.loginController.isTeacher(fields)
+        messagebox.showerror("Error", "Improper Login or Password!")
 
     def on_back(self):
-        from gui_views.HomeView import HomeView
-        HomeView(self.loginController)
+        self.loginController.home()
 
     def main(self):
         self.window.mainloop()

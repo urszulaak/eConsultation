@@ -38,7 +38,7 @@ class RegisterView(View):
         account_type_student = tk.Radiobutton(account_type_frame, text="Student", variable=self.account_type_var,
                                               value="student", font=input_font, bg='#f0f0f0')
         account_type_teacher = tk.Radiobutton(account_type_frame, text="Teacher", variable=self.account_type_var,
-                                              value="teacher", font=input_font, bg='#f0f0f0')
+                                              value="t", font=input_font, bg='#f0f0f0')
         account_type_student.pack(side='right', padx=10)
         account_type_teacher.pack(side='right')
 

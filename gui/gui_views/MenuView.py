@@ -15,20 +15,16 @@ class MenuView(View):
         self.window.geometry("1100x600")
         self.window.configure(bg='#f0f0f0')
 
-        # Main frame
         self.main_frame = tk.Frame(self.window, bg='#f0f0f0')
         self.main_frame.pack(expand=True, fill='both', padx=20, pady=20)
 
-        # Title
         title_font = font.Font(family="Helvetica", size=24, weight="bold")
         self.title_label = tk.Label(self.main_frame, text="Menu", font=title_font, bg='#f0f0f0', fg='#333333')
         self.title_label.pack(pady=(0, 30))
 
-        # Button frame
         self.button_frame = tk.Frame(self.main_frame, bg='#f0f0f0')
         self.button_frame.pack(expand=True, fill='both')
 
-        # Buttons
         self.buttons = []
         self.current_row = 0
         self.create_menu_buttons()
@@ -40,7 +36,6 @@ class MenuView(View):
         self.window.bind('<Control-e>', self.exit_menu)
 
     def create_menu_buttons(self):
-        # To be overridden by subclasses
         content = self.get_menu_content()
         button_font = font.Font(family="Helvetica", size=12, weight="bold")
 
@@ -58,15 +53,14 @@ class MenuView(View):
             btn.pack(fill='x', pady=10)
             self.buttons.append(btn)
 
-        # Highlight first button
         self.update_button_colors()
 
     def update_button_colors(self):
         for i, btn in enumerate(self.buttons):
             if i == self.current_row:
-                btn.configure(bg='#45a049')  # Highlighted color
+                btn.configure(bg='#45a049')
             else:
-                btn.configure(bg='#4CAF50')  # Normal color
+                btn.configure(bg='#4CAF50')
 
     def move_up(self, event=None):
         if self.current_row > 0:
@@ -89,12 +83,7 @@ class MenuView(View):
         self.controller.menuChoice(len(self.buttons) - 1)
 
     def get_menu_content(self):
-        # To be overridden by subclasses
         return []
-
-    def get_shortcuts(self):
-        # To be overridden by subclasses
-        return {}
 
     def main(self):
         self.window.mainloop()
