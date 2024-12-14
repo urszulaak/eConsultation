@@ -5,7 +5,6 @@ class UserMenuView(MenuView):
     def __init__(self, controller, response=None):
         super().__init__(controller, response)
         self.window.title("eConsultation")
-        self.title_label.configure(text="User Menu")
 
     def get_menu_content(self):
         return [

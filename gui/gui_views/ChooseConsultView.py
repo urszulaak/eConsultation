@@ -19,34 +19,35 @@ class ChooseConsultView(View):
         self.selected_date = None
         self.selected_stamp = None
 
+        COLORS = {
+        'background': '#F5F5F5',
+        'primary': '#4CAF50',
+        'secondary': '#3B963E',
+        'text_dark': '#333333',
+        'text_light': '#FFFFFF'
+        }
+
         self.window.title("eConsultation")
         self.window.geometry("1100x600")
         self.window.configure(bg='#f0f0f0')
 
-        # Main frame
         main_frame = tk.Frame(self.window, bg='#f0f0f0')
         main_frame.pack(expand=True, fill='both', padx=20, pady=20)
 
-        # Title
-        title_font = font.Font(family="Helvetica", size=24, weight="bold")
-        title_label = tk.Label(main_frame, text="Book a Consultation", font=title_font, bg='#f0f0f0', fg='#333333')
-        title_label.pack(pady=(0, 30))
+        title_font = font.Font(family="Segoe UI", size=max(24, int(self.window.winfo_screenwidth() * 0.02)), weight="bold")
+        title_label = tk.Label(main_frame, text="Book a Consultation", font=title_font, bg=COLORS['primary'], fg=COLORS['text_light'], anchor='center')
+        title_label.pack(fill='x', pady=(0, 30))
 
-        # Subtitle
         subtitle_font = font.Font(family="Helvetica", size=12)
-        self.subtitle_label = tk.Label(main_frame, text="Select a Teacher",
-                                        font=subtitle_font, bg='#f0f0f0', fg='#666666')
+        self.subtitle_label = tk.Label(main_frame, text="Select a Teacher", font=subtitle_font, bg='#f0f0f0', fg='#666666')
         self.subtitle_label.pack(pady=(0, 20))
 
-        # Content frame
         self.content_frame = tk.Frame(main_frame, bg='#f0f0f0')
         self.content_frame.pack(expand=True, fill='both')
 
-        # Navigation buttons frame
         nav_frame = tk.Frame(main_frame, bg='#f0f0f0')
         nav_frame.pack(fill='x', pady=(20, 0))
 
-        # Button style
         button_font = font.Font(family="Helvetica", size=10, weight="bold")
         button_style = {
             'font': button_font,
@@ -67,37 +68,27 @@ class ChooseConsultView(View):
             'activebackground': '#d32f2f'
         })
 
-        # Home button
-        self.home_btn = tk.Button(nav_frame, text="Back to Home", command=self.go_home,
-                                    **home_button_style)
+        self.home_btn = tk.Button(nav_frame, text="Back to Home", command=self.go_home, **home_button_style)
         self.home_btn.pack(side=tk.LEFT, padx=10)
 
-        # Back and Next buttons
-        self.back_btn = tk.Button(nav_frame, text="Back", command=self.go_back,
-                                    state=tk.DISABLED, **button_style)
+        self.back_btn = tk.Button(nav_frame, text="Back", command=self.go_back, state=tk.DISABLED, **button_style)
         self.back_btn.pack(side=tk.LEFT, padx=10)
 
-        self.next_btn = tk.Button(nav_frame, text="Next", command=self.go_next,
-                                    state=tk.DISABLED, **button_style)
+        self.next_btn = tk.Button(nav_frame, text="Next", command=self.go_next, state=tk.DISABLED, **button_style)
         self.next_btn.pack(side=tk.RIGHT, padx=10)
 
-        # Load initial teachers
         self.load_teachers()
 
     def go_home(self):
-        """Navigate back to the home screen."""
         self.chooseConsultController.home()
 
     def load_teachers(self):
-        # Clear previous content
         for widget in self.content_frame.winfo_children():
             widget.destroy()
 
-        # Get teachers
         teachers_ids = self.chooseConsultController._getTeachersID()
         teachers = self.chooseConsultController._getTeachers()
 
-        # Teachers grid
         teachers_frame = tk.Frame(self.content_frame, bg='#f0f0f0')
         teachers_frame.pack(expand=True, fill='both')
 
@@ -114,7 +105,6 @@ class ChooseConsultView(View):
             )
             teacher_btn.pack(pady=10)
 
-        # Enable/disable buttons
         self.back_btn.config(state=tk.DISABLED)
         self.next_btn.config(state=tk.DISABLED)
 
@@ -124,33 +114,31 @@ class ChooseConsultView(View):
         self.load_calendar(teacher_id)
 
     def load_calendar(self, teacher_id):
-        # Clear previous content
         for widget in self.content_frame.winfo_children():
             widget.destroy()
 
         self.subtitle_label.config(text="Select a Date")
         self.current_step = 'calendar'
 
-        # Track current displayed month and year
         if not hasattr(self, 'displayed_year') or not hasattr(self, 'displayed_month'):
             now = datetime.now()
             self.displayed_year = now.year
             self.displayed_month = now.month
 
-        # Get available days
         available_days = self.chooseConsultController._getDaysID(self.selected_teacher)
 
-        # Calendar frame
         calendar_frame = tk.Frame(self.content_frame, bg='#f0f0f0')
         calendar_frame.pack(expand=True, fill='both')
 
-        # Navigation for month
         nav_frame = tk.Frame(calendar_frame, bg='#f0f0f0')
         nav_frame.pack(fill='x', pady=10)
 
+        month_nav_frame = tk.Frame(nav_frame, bg='#f0f0f0')
+        month_nav_frame.pack(side=tk.LEFT, expand=True)
+
         prev_month_btn = tk.Button(
-            nav_frame,
-            text="<",
+            month_nav_frame,
+            text="⬅️",  # Left arrow emoji
             command=self.prev_month,
             font=("Helvetica", 12),
             width=3,
@@ -158,19 +146,19 @@ class ChooseConsultView(View):
             fg='white',
             activebackground='#45a049'
         )
-        prev_month_btn.pack(side=tk.LEFT)
+        prev_month_btn.pack(side=tk.LEFT, padx=(5, 0))  # Reduced left padding to bring closer
 
         month_label = tk.Label(
-            nav_frame,
+            month_nav_frame,
             text=f"{calendar.month_name[self.displayed_month]} {self.displayed_year}",
             font=("Helvetica", 16, "bold"),
             bg='#f0f0f0'
         )
-        month_label.pack(side=tk.LEFT, expand=True, padx=10)
+        month_label.pack(side=tk.LEFT, padx=(5, 5))  # Reduced padding around month label
 
         next_month_btn = tk.Button(
-            nav_frame,
-            text=">",
+            month_nav_frame,
+            text="➡️",  # Right arrow emoji
             command=self.next_month,
             font=("Helvetica", 12),
             width=3,
@@ -178,18 +166,15 @@ class ChooseConsultView(View):
             fg='white',
             activebackground='#45a049'
         )
-        next_month_btn.pack(side=tk.RIGHT)
+        next_month_btn.pack(side=tk.LEFT, padx=(0, 5))  # Reduced right padding to bring closer
 
-        # Calendar display
         calendar_grid = tk.Frame(calendar_frame, bg='#f0f0f0')
         calendar_grid.pack(expand=True)
 
-        # Weekday headers
         weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
         for idx, day in enumerate(weekdays):
             tk.Label(calendar_grid, text=day, bg='#f0f0f0', font=("Helvetica", 10)).grid(row=0, column=idx, padx=5, pady=5)
 
-        # Get month calendar
         cal = calendar.monthcalendar(self.displayed_year, self.displayed_month)
         for week_idx, week in enumerate(cal):
             for day_idx, day in enumerate(week):
@@ -198,10 +183,9 @@ class ChooseConsultView(View):
 
                 day_date = date(self.displayed_year, self.displayed_month, day)
 
-                # Check day availability and conditions
                 is_available = (day_idx + 1) in available_days and \
-                               day_date >= date.today() and \
-                               not self.is_holiday(day_date)
+                            day_date >= date.today() and \
+                            not self.is_holiday(day_date)
 
                 day_btn_style = {
                     'width': 4,
@@ -228,15 +212,12 @@ class ChooseConsultView(View):
                         fg='white',
                         **day_btn_style
                     )
-
                 day_btn.grid(row=week_idx + 1, column=day_idx, padx=2, pady=2)
 
-        # Enable/disable buttons
         self.back_btn.config(state=tk.NORMAL)
         self.next_btn.config(state=tk.DISABLED)
 
     def prev_month(self):
-        """Navigate to the previous month."""
         if self.displayed_month == 1:
             self.displayed_month = 12
             self.displayed_year -= 1
@@ -245,7 +226,6 @@ class ChooseConsultView(View):
         self.load_calendar(self.selected_teacher)
 
     def next_month(self):
-        """Navigate to the next month."""
         if self.displayed_month == 12:
             self.displayed_month = 1
             self.displayed_year += 1
@@ -273,18 +253,15 @@ class ChooseConsultView(View):
         self.load_timestamps(day, day_idx)
 
     def load_timestamps(self, day, day_idx):
-        # Clear previous content
         for widget in self.content_frame.winfo_children():
             widget.destroy()
 
         self.subtitle_label.config(text="Select a Time Slot")
         self.current_step = 'timestamps'
 
-        # Get available timestamps
         stamps_ids = self.chooseConsultController.getStampsID(self.selected_teacher, day_idx)
         stamps = self.chooseConsultController.getStamps(self.selected_teacher, day_idx)
 
-        # Timestamps frame
         timestamps_frame = tk.Frame(self.content_frame, bg='#f0f0f0')
         timestamps_frame.pack(expand=True, fill='both')
 
@@ -301,7 +278,6 @@ class ChooseConsultView(View):
             )
             stamp_btn.pack(pady=10)
 
-        # Enable/disable buttons
         self.back_btn.config(state=tk.NORMAL)
         self.next_btn.config(state=tk.DISABLED)
 
@@ -310,30 +286,31 @@ class ChooseConsultView(View):
         self.load_form()
 
     def load_form(self):
-        # Clear previous content
         for widget in self.content_frame.winfo_children():
             widget.destroy()
 
         self.subtitle_label.config(text="Consultation Details")
         self.current_step = 'form'
 
-        # Form frame
-        form_frame = tk.Frame(self.content_frame, bg='#f0f0f0')
-        form_frame.pack(expand=True, fill='both', padx=20)
+        form_frame = tk.Frame(self.content_frame, bg='#f0f0f0', padx=40, pady=20)
+        form_frame.pack(expand=True, fill='both', pady=(0, 10))  # Reduced bottom padding to move it closer
 
-        # Topic input
-        topic_label = tk.Label(form_frame, text="Consultation Topic:", bg='#f0f0f0', font=("Helvetica", 12))
-        topic_label.pack(anchor='w', pady=(0, 5))
+        topic_label = tk.Label(form_frame, text="Consultation Topic", bg='#f0f0f0', font=("Helvetica", 12))
+        topic_label.grid(row=0, column=0, pady=(10, 5), sticky="ew", padx=10)  # Centered label
         self.topic_entry = tk.Entry(form_frame, font=("Helvetica", 12), width=40)
-        self.topic_entry.pack(pady=(0, 20))
+        self.topic_entry.grid(row=1, column=0, pady=(0, 20), padx=10)  # Input field below label
 
-        # Description input
-        desc_label = tk.Label(form_frame, text="Description:", bg='#f0f0f0', font=("Helvetica", 12))
-        desc_label.pack(anchor='w', pady=(0, 5))
+        desc_label = tk.Label(form_frame, text="Description", bg='#f0f0f0', font=("Helvetica", 12))
+        desc_label.grid(row=2, column=0, pady=(10, 5), sticky="ew", padx=10)  # Centered label
         self.desc_text = tk.Text(form_frame, font=("Helvetica", 12), width=40, height=10)
-        self.desc_text.pack(pady=(0, 20))
+        self.desc_text.grid(row=3, column=0, pady=(0, 20), padx=10)  # Input field below label
 
-        # Enable/disable buttons
+        form_frame.grid_rowconfigure(0, weight=1)
+        form_frame.grid_rowconfigure(1, weight=1)
+        form_frame.grid_rowconfigure(2, weight=1)
+        form_frame.grid_rowconfigure(3, weight=1)
+        form_frame.grid_columnconfigure(0, weight=1)
+
         self.back_btn.config(state=tk.NORMAL)
         self.next_btn.config(state=tk.NORMAL)
 
@@ -349,10 +326,8 @@ class ChooseConsultView(View):
         if self.current_step == 'teachers':
             self.load_calendar(self.selected_teacher)
         elif self.current_step == 'calendar':
-            # Timestamp selection
             self.load_timestamps(int(self.selected_date.split('-')[2]) - 1)
         elif self.current_step == 'form':
-            # Submit consultation
             topic = self.topic_entry.get()
             description = self.desc_text.get("1.0", tk.END).strip()
 
@@ -380,5 +355,3 @@ class ChooseConsultView(View):
 
     def close(self):
         self.window.quit()
-
-

@@ -9,19 +9,32 @@ class LoginView(View):
         self.window = Custom.get_window()
         Custom.clear_window(self.window)
 
+        COLORS = {
+            'background': '#F5F5F5',
+            'primary': '#4CAF50',
+            'secondary': '#3B963E',
+            'error': '#f44336',
+            'text_dark': '#333333',
+            'text_light': '#FFFFFF'
+        }
+
         self.window.title("eConsultation")
         self.window.geometry("1100x600")
-        self.window.configure(bg='#f0f0f0')
+        self.window.configure(bg=COLORS['background'])
 
-        main_frame = tk.Frame(self.window, bg='#f0f0f0')
-        main_frame.pack(expand=True, fill='both', padx=20, pady=20)
+        main_frame = tk.Frame(self.window, bg=COLORS['background'])
+        main_frame.pack(expand=True, fill='both')
 
-        title_font = font.Font(family="Helvetica", size=24, weight="bold")
-        title_label = tk.Label(main_frame, text="Login", font=title_font, bg='#f0f0f0', fg='#333333')
-        title_label.pack(pady=(0, 30))
+        title_font = font.Font(family="Segoe UI", size=max(24, int(self.window.winfo_screenwidth() * 0.02)), weight="bold")
+        title_label = tk.Label(main_frame, text="Login", font=title_font, bg=COLORS['primary'], fg=COLORS['text_light'], anchor='center')
+        title_label.pack(fill='x', pady=(0, 30))
 
-        input_font = font.Font(family="Helvetica", size=12)
-        label_font = font.Font(family="Helvetica", size=10)
+        input_frame = tk.Frame(main_frame, bg=COLORS['background'])
+        input_frame.place(relx=0.5, rely=0.5, anchor='center')
+
+        input_font = font.Font(family="Segoe UI", size=max(10, int(self.window.winfo_screenwidth() * 0.01)))
+        label_font = font.Font(family="Helvetica", size=12)
+        entry_width = max(20, int(self.window.winfo_screenwidth() * 0.025))
 
         input_fields = [
             ("Login:", "login", False),
@@ -30,43 +43,40 @@ class LoginView(View):
 
         self.entries = {}
         for label_text, entry_name, is_password in input_fields:
-            frame = tk.Frame(main_frame, bg='#f0f0f0')
+            frame = tk.Frame(input_frame, bg=COLORS['background'])
             frame.pack(fill='x', pady=10)
 
-            label = tk.Label(frame, text=label_text, font=label_font, width=15, anchor='w', bg='#f0f0f0')
-            label.pack(side='left')
+            label = tk.Label(frame, text=label_text, font=label_font, anchor='w', bg=COLORS['background'], fg=COLORS['text_dark'])
+            label.pack(side='left', padx=5)
 
-            entry = tk.Entry(frame, font=input_font, width=20,
-                             show='*' if is_password else '')
-            entry.pack(side='right')
+            entry = tk.Entry(frame, font=input_font, width=entry_width, show='*' if is_password else '')
+            entry.pack(side='right', padx=5)
             self.entries[entry_name] = entry
 
-        # Login Button
-        login_btn = tk.Button(main_frame, text="Login", command=self.on_login,
-                               font=input_font, bg='#4CAF50', fg='white',
-                               activebackground='#45a049', relief='flat',
-                               padx=10, pady=10, width=20)
+        login_btn = tk.Button(input_frame, text="Login", command=self.on_login,
+                               font=input_font, bg=COLORS['primary'], fg=COLORS['text_light'],
+                               activebackground=COLORS['secondary'], relief='flat',
+                               width=entry_width)
         login_btn.pack(pady=20)
-        login_btn.bind('<Enter>', lambda e: login_btn.configure(bg='#45a049'))
-        login_btn.bind('<Leave>', lambda e: login_btn.configure(bg='#4CAF50'))
+        login_btn.bind('<Enter>', lambda e: login_btn.configure(bg=COLORS['secondary']))
+        login_btn.bind('<Leave>', lambda e: login_btn.configure(bg=COLORS['primary']))
 
-        # Back to Home Button
-        back_btn = tk.Button(main_frame, text="Back to Home", command=self.on_back,
-                              font=label_font, bg='#f44336', fg='white',
+        back_btn = tk.Button(input_frame, text="Back to Home", command=self.on_back,
+                              font=label_font, bg=COLORS['error'], fg=COLORS['text_light'],
                               activebackground='#d32f2f', relief='flat',
-                              padx=10, pady=5)
+                              width=entry_width // 2)
         back_btn.pack(pady=10)
         back_btn.bind('<Enter>', lambda e: back_btn.configure(bg='#d32f2f'))
-        back_btn.bind('<Leave>', lambda e: back_btn.configure(bg='#f44336'))
+        back_btn.bind('<Leave>', lambda e: back_btn.configure(bg=COLORS['error']))
 
-    def on_login(self):
-        # Collect login data
+        self.window.bind('<Return>', self.on_login)
+
+    def on_login(self, event=None):
         fields = [
             self.entries['login'].get(),
             self.entries['password'].get()
         ]
 
-        # Check login and handle different scenarios
         if not self.loginController.isTeacher(fields):
             messagebox.showerror("Error", "Improper Login or Password!")
 

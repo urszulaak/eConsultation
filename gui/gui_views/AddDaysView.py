@@ -1,9 +1,8 @@
 import tkinter as tk
-from tkinter import font, messagebox
+from tkinter import font, messagebox, ttk
 from shared_core.View import View
 from gui_views.Custom import Custom
 import math
-
 
 class AddDaysView(View):
     def __init__(self, controller, response=None):
@@ -12,135 +11,163 @@ class AddDaysView(View):
         self.window = Custom.get_window()
         Custom.clear_window(self.window)
 
-        self.window.title("Add Days")
-        self.window.geometry("1000x600")
-        self.window.configure(bg='#f0f0f0')
-
-        # Main frame
-        main_frame = tk.Frame(self.window, bg='#f0f0f0')
-        main_frame.pack(expand=True, fill='both', padx=20, pady=20)
-
-        # Title
-        title_font = font.Font(family="Helvetica", size=20, weight="bold")
-        title_label = tk.Label(main_frame, text="Add Course Days", font=title_font, bg='#f0f0f0', fg='#333333')
-        title_label.pack(pady=(0, 30))
-
-        # Button style
-        button_font = font.Font(family="Helvetica", size=12, weight="bold")
-        button_style = {
-            'font': button_font,
-            'width': 25,
-            'bg': '#4CAF50',
-            'fg': 'white',
-            'activebackground': '#45a049',
-            'activeforeground': 'white',
-            'relief': 'flat',
-            'padx': 10,
-            'pady': 10
+        COLORS = {
+        'background': '#F5F5F5',
+        'primary': '#4CAF50',
+        'secondary': '#3B963E',
+        'text_dark': '#333333',
+        'text_light': '#FFFFFF'
         }
+        
+        self.window.title("eConsultation")
+        self.window.geometry("1100x600")
+        self.window.configure(bg='#f4f4f8')
 
-        # Days frame
-        days_frame = tk.Frame(main_frame, bg='#f0f0f0')
+        main_frame = tk.Frame(self.window, bg='#f4f4f8')
+        main_frame.pack(expand=True, fill='both', padx=30, pady=30)
+
+        title_font = font.Font(family="Segoe UI", size=max(24, int(self.window.winfo_screenwidth() * 0.02)), weight="bold")
+        title_label = tk.Label(main_frame, text="Add Course Days", font=title_font, bg=COLORS['primary'], fg=COLORS['text_light'], anchor='center')
+        title_label.pack(fill='x', pady=(0, 30))
+
+        days_frame = tk.Frame(main_frame, bg='#f4f4f8')
         days_frame.pack(pady=20)
 
-        # Days label
-        days_label = tk.Label(days_frame, text="Select Day", font=("Helvetica", 14), bg='#f0f0f0', fg='#666666')
-        days_label.pack(pady=(0, 10))
+        days_label = tk.Label(days_frame, text="Select Day", font=("Segoe UI", 16, "bold"), bg='#f4f4f8', fg='#2c3e50')
+        days_label.pack(pady=(0, 15))
 
-        # Days buttons
         self.days = self.addDaysController._getDays()
         self.selected_day_index = tk.IntVar()
         self.day_buttons = []
 
+        days_button_frame = tk.Frame(days_frame, bg='#f4f4f8')
+        days_button_frame.pack()
+
         for day_index, day_name in enumerate(self.days, 1):
-            btn = tk.Radiobutton(
-                days_frame,
+            btn = tk.Button(
+                days_button_frame,
                 text=day_name,
-                variable=self.selected_day_index,
-                value=day_index,
-                font=button_font,
-                bg='#f0f0f0',
-                activebackground='#f0f0f0',
-                indicatoron=0,
+                command=lambda idx=day_index: self.on_day_select(idx),
+                font=("Segoe UI", 12, "bold"),
+                bg='#2ecc71',
+                fg='white',
+                activebackground='#27ae60',
+                relief='flat',
                 width=10,
-                command=self.on_day_select
+                padx=10,
+                pady=8,
+                borderwidth=0
             )
-            btn.pack(side=tk.LEFT, padx=5)
+            btn.pack(side=tk.LEFT, padx=5, pady=5)
             self.day_buttons.append(btn)
 
-        # Timestamps frame
-        self.timestamps_frame = tk.Frame(main_frame, bg='#f0f0f0')
+        self.timestamps_frame = tk.Frame(main_frame, bg='#f4f4f8')
         self.timestamps_frame.pack(pady=20)
 
-        # Bottom buttons
-        bottom_frame = tk.Frame(main_frame, bg='#f0f0f0')
+        bottom_frame = tk.Frame(main_frame, bg='#f4f4f8')
         bottom_frame.pack(pady=20)
 
-        save_btn = tk.Button(bottom_frame, text="Save", command=self.on_save, **button_style)
+        button_style = {
+            'font': ("Segoe UI", 12, "bold"),
+            'fg': 'white',
+            'relief': 'flat',
+            'width': 15,
+            'padx': 15,
+            'pady': 10,
+            'borderwidth': 0
+        }
+
+        save_btn = tk.Button(
+            bottom_frame, 
+            text="Save", 
+            command=self.on_save,
+            **button_style,
+            bg='#4CAF50',
+            activebackground='#45a049'
+        )
         save_btn.pack(side=tk.LEFT, padx=10)
         save_btn.bind('<Enter>', lambda e: save_btn.configure(bg='#45a049'))
         save_btn.bind('<Leave>', lambda e: save_btn.configure(bg='#4CAF50'))
 
-        cancel_btn = tk.Button(bottom_frame, text="Cancel", command=self.on_cancel,
-                               **{**button_style, 'bg': '#F44336', 'activebackground': '#D32F2F'})
+        cancel_btn = tk.Button(
+            bottom_frame, 
+            text="Cancel", 
+            command=self.on_cancel,
+            **button_style,
+            bg='#F44336',
+            activebackground='#D32F2F'
+        )
         cancel_btn.pack(side=tk.LEFT, padx=10)
         cancel_btn.bind('<Enter>', lambda e: cancel_btn.configure(bg='#D32F2F'))
         cancel_btn.bind('<Leave>', lambda e: cancel_btn.configure(bg='#F44336'))
 
-        exit_btn = tk.Button(bottom_frame, text="Exit", 
-                             command=self.on_exit,
-                             **{**button_style, 'bg': '#2196F3', 'activebackground': '#1976D2'})
+        exit_btn = tk.Button(
+            bottom_frame, 
+            text="Exit", 
+            command=self.on_exit,
+            **button_style,
+            bg='#2196F3',
+            activebackground='#1976D2'
+        )
         exit_btn.pack(side=tk.LEFT, padx=10)
         exit_btn.bind('<Enter>', lambda e: exit_btn.configure(bg='#1976D2'))
         exit_btn.bind('<Leave>', lambda e: exit_btn.configure(bg='#2196F3'))
 
-    def on_day_select(self):
-        # Clear previous timestamps
+    def on_day_select(self, day_index):
+        for btn in self.day_buttons:
+            btn.configure(bg='#2ecc71', fg='white')
+        self.day_buttons[day_index-1].configure(bg='#27ae60', fg='white')
+
         for widget in self.timestamps_frame.winfo_children():
             widget.destroy()
 
-        # Get selected day index (already an integer)
-        selected_day_index = self.selected_day_index.get() - 1
+        selected_day_index = day_index - 1
+        self.selected_day_index.set(day_index)
 
-        # Get timestamps
         timestamps = self.addDaysController._getTimeStamps()
 
-        # Get already added timestamps for this day
         added_timestamps = self.addDaysController.ifAdded(self.response, selected_day_index)
         added_timestamps = [x - 1 for x in added_timestamps]
 
-        # Timestamps label
-        timestamps_label = tk.Label(self.timestamps_frame, text="Select Timestamps",
-                                    font=("Helvetica", 14), bg='#f0f0f0', fg='#666666')
-        timestamps_label.pack(pady=(0, 10))
+        timestamps_label = tk.Label(
+            self.timestamps_frame, 
+            text="Select Timestamps",
+            font=("Segoe UI", 16, "bold"), 
+            bg='#f4f4f8', 
+            fg='#2c3e50'
+        )
+        timestamps_label.pack(pady=(0, 15))
 
-        # Timestamps buttons
-        def create_two_row_layout():
-            # Create two frames for two rows
-            row1_frame = tk.Frame(self.timestamps_frame, bg='#f0f0f0')
-            row1_frame.pack(fill='x', pady=5)
-            row2_frame = tk.Frame(self.timestamps_frame, bg='#f0f0f0')
-            row2_frame.pack(fill='x', pady=5)
+        timestamps_container = tk.Frame(self.timestamps_frame, bg='#f4f4f8')
+        timestamps_container.pack(fill='x')
 
-            # Split timestamps into two rows
-            half = math.ceil(len(timestamps) / 2)
-            self.timestamp_vars = []
+        top_row_frame = tk.Frame(timestamps_container, bg='#f4f4f8')
+        bottom_row_frame = tk.Frame(timestamps_container, bg='#f4f4f8')
+        top_row_frame.pack(pady=5)
+        bottom_row_frame.pack(pady=5)
 
-            for i, timestamp in enumerate(timestamps):
-                var = tk.BooleanVar(value=(i in added_timestamps))
-                self.timestamp_vars.append(var)
+        half = math.ceil(len(timestamps) / 2)
+        self.timestamp_vars = []
 
-                btn = tk.Checkbutton(
-                    row1_frame if i < half else row2_frame,
-                    text=str(timestamp),
-                    variable=var,
-                    font=("Helvetica", 12),
-                    bg='#f0f0f0',
-                    activebackground='#f0f0f0'
-                )
-                btn.pack(side=tk.LEFT, padx=5)
-    
-        create_two_row_layout()
+        for i, timestamp in enumerate(timestamps):
+            var = tk.BooleanVar(value=(i in added_timestamps))
+            self.timestamp_vars.append(var)
+
+            btn = tk.Checkbutton(
+                top_row_frame if i < half else bottom_row_frame,
+                text=str(timestamp),
+                variable=var,
+                font=("Segoe UI", 12),
+                bg='#f4f4f8',
+                activebackground='#f4f4f8',
+                selectcolor='#2ecc71',
+                indicatoron=0,
+                width=15,
+                borderwidth=1,
+                relief='solid',
+                compound=tk.CENTER
+            )
+            btn.pack(side=tk.LEFT, padx=5, pady=5)
 
     def on_save(self):
         if not self.selected_day_index.get():
@@ -149,7 +176,6 @@ class AddDaysView(View):
 
         selected_day_index = self.selected_day_index.get() - 1
 
-        # Get selected timestamps
         selected_timestamps = [
             i for i, var in enumerate(self.timestamp_vars)
             if var.get()
@@ -163,6 +189,10 @@ class AddDaysView(View):
         self.selected_day_index.set(0)
         for widget in self.timestamps_frame.winfo_children():
             widget.destroy()
+
+        # Reset day button styles
+        for btn in self.day_buttons:
+            btn.configure(bg='#2ecc71', fg='white')
 
     def main(self):
         self.window.mainloop()
