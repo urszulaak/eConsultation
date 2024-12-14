@@ -11,5 +11,5 @@ class TeacherMenuView(MenuView):
         return [
             'Add consultation days',
             'Check consultation request',
-            'Log out [ctrl + E]',
+            'Log out',
         ]

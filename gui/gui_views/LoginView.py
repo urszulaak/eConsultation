@@ -67,8 +67,8 @@ class LoginView(View):
         ]
 
         # Check login and handle different scenarios
-        self.loginController.isTeacher(fields)
-        messagebox.showerror("Error", "Improper Login or Password!")
+        if not self.loginController.isTeacher(fields):
+            messagebox.showerror("Error", "Improper Login or Password!")
 
     def on_back(self):
         self.loginController.home()

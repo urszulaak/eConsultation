@@ -11,7 +11,7 @@ class CheckConsultController(Controller):
     def __init__(self,response=None):
         self.response = response
         self.consultModel = ConsultModel()
-        self.checkUConsultView = self.loadView("checkUConsult", response)
+        self.checkConsultView = self.loadView("checkConsult", response)
 
     def getConsult(self):
         response = self.consultModel.consults(self.response)

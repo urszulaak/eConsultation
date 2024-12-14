@@ -97,8 +97,7 @@ class RegisterView(View):
             messagebox.showerror("Error", "User with this login already exists!")
 
     def on_back(self):
-        from gui_views.HomeView import HomeView
-        HomeView(self.registerController)
+        self.registerController.home()
 
     def main(self):
         self.window.mainloop()

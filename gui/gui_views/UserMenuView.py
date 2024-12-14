@@ -11,5 +11,5 @@ class UserMenuView(MenuView):
         return [
             'Book consultation',
             'Check consultations status',
-            'Log out [ctrl + E]',
+            'Log out',
         ]

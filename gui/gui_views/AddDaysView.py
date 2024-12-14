@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import font, messagebox
 from shared_core.View import View
 from gui_views.Custom import Custom
+import math
 
 
 class AddDaysView(View):
@@ -12,7 +13,7 @@ class AddDaysView(View):
         Custom.clear_window(self.window)
 
         self.window.title("Add Days")
-        self.window.geometry("1100x700")
+        self.window.geometry("1000x600")
         self.window.configure(bg='#f0f0f0')
 
         # Main frame
@@ -86,6 +87,13 @@ class AddDaysView(View):
         cancel_btn.bind('<Enter>', lambda e: cancel_btn.configure(bg='#D32F2F'))
         cancel_btn.bind('<Leave>', lambda e: cancel_btn.configure(bg='#F44336'))
 
+        exit_btn = tk.Button(bottom_frame, text="Exit", 
+                             command=self.on_exit,
+                             **{**button_style, 'bg': '#2196F3', 'activebackground': '#1976D2'})
+        exit_btn.pack(side=tk.LEFT, padx=10)
+        exit_btn.bind('<Enter>', lambda e: exit_btn.configure(bg='#1976D2'))
+        exit_btn.bind('<Leave>', lambda e: exit_btn.configure(bg='#2196F3'))
+
     def on_day_select(self):
         # Clear previous timestamps
         for widget in self.timestamps_frame.winfo_children():
@@ -107,20 +115,32 @@ class AddDaysView(View):
         timestamps_label.pack(pady=(0, 10))
 
         # Timestamps buttons
-        self.timestamp_vars = []
-        for i, timestamp in enumerate(timestamps):
-            var = tk.BooleanVar(value=(i in added_timestamps))
-            self.timestamp_vars.append(var)
+        def create_two_row_layout():
+            # Create two frames for two rows
+            row1_frame = tk.Frame(self.timestamps_frame, bg='#f0f0f0')
+            row1_frame.pack(fill='x', pady=5)
+            row2_frame = tk.Frame(self.timestamps_frame, bg='#f0f0f0')
+            row2_frame.pack(fill='x', pady=5)
 
-            btn = tk.Checkbutton(
-                self.timestamps_frame,
-                text=str(timestamp),
-                variable=var,
-                font=("Helvetica", 12),
-                bg='#f0f0f0',
-                activebackground='#f0f0f0'
-            )
-            btn.pack(anchor='w')
+            # Split timestamps into two rows
+            half = math.ceil(len(timestamps) / 2)
+            self.timestamp_vars = []
+
+            for i, timestamp in enumerate(timestamps):
+                var = tk.BooleanVar(value=(i in added_timestamps))
+                self.timestamp_vars.append(var)
+
+                btn = tk.Checkbutton(
+                    row1_frame if i < half else row2_frame,
+                    text=str(timestamp),
+                    variable=var,
+                    font=("Helvetica", 12),
+                    bg='#f0f0f0',
+                    activebackground='#f0f0f0'
+                )
+                btn.pack(side=tk.LEFT, padx=5)
+    
+        create_two_row_layout()
 
     def on_save(self):
         if not self.selected_day_index.get():
@@ -138,13 +158,17 @@ class AddDaysView(View):
         self.addDaysController._saveTimeStamps(selected_timestamps, selected_day_index, self.response)
 
         messagebox.showinfo("Success", "Timestamps saved successfully!")
-        self.window.quit()
 
     def on_cancel(self):
-        self.window.quit()
+        self.selected_day_index.set(0)
+        for widget in self.timestamps_frame.winfo_children():
+            widget.destroy()
 
     def main(self):
         self.window.mainloop()
+
+    def on_exit(self):
+        self.addDaysController._teacherHome()
 
     def close(self):
         self.window.quit()

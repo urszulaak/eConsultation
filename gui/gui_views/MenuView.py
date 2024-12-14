@@ -29,12 +29,6 @@ class MenuView(View):
         self.current_row = 0
         self.create_menu_buttons()
 
-        # Bind keyboard events
-        self.window.bind('<Up>', self.move_up)
-        self.window.bind('<Down>', self.move_down)
-        self.window.bind('<Return>', self.select_current)
-        self.window.bind('<Control-e>', self.exit_menu)
-
     def create_menu_buttons(self):
         content = self.get_menu_content()
         button_font = font.Font(family="Helvetica", size=12, weight="bold")
@@ -51,6 +45,8 @@ class MenuView(View):
                 command=lambda idx=len(self.buttons): self.select_menu_item(idx)
             )
             btn.pack(fill='x', pady=10)
+            btn.bind('<Enter>', lambda e: btn.configure(bg='#45a049'))
+            btn.bind('<Leave>', lambda e: btn.configure(bg='#4CAF50'))
             self.buttons.append(btn)
 
         self.update_button_colors()

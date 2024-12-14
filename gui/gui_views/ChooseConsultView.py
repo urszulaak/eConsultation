@@ -20,7 +20,7 @@ class ChooseConsultView(View):
         self.selected_stamp = None
 
         self.window.title("Choose Consultation")
-        self.window.geometry("1100x800")
+        self.window.geometry("1100x600")
         self.window.configure(bg='#f0f0f0')
 
         # Main frame
@@ -115,6 +115,12 @@ class ChooseConsultView(View):
         self.subtitle_label.config(text="Select a Date")
         self.current_step = 'calendar'
 
+        # Track current displayed month and year
+        if not hasattr(self, 'displayed_year') or not hasattr(self, 'displayed_month'):
+            now = datetime.now()
+            self.displayed_year = now.year
+            self.displayed_month = now.month
+
         # Get available days
         available_days = self.chooseConsultController._getDaysID(self.selected_teacher)
 
@@ -122,34 +128,59 @@ class ChooseConsultView(View):
         calendar_frame = tk.Frame(self.content_frame, bg='#f0f0f0')
         calendar_frame.pack(expand=True, fill='both')
 
-        # Current date
-        now = datetime.now()
-        cal = calendar.monthcalendar(now.year, now.month)
+        # Navigation for month
+        nav_frame = tk.Frame(calendar_frame, bg='#f0f0f0')
+        nav_frame.pack(fill='x', pady=10)
+
+        prev_month_btn = tk.Button(
+            nav_frame,
+            text="<",
+            command=self.prev_month,
+            font=("Helvetica", 12),
+            width=3,
+            bg='#4CAF50',
+            fg='white',
+            activebackground='#45a049'
+        )
+        prev_month_btn.pack(side=tk.LEFT)
+
+        month_label = tk.Label(
+            nav_frame,
+            text=f"{calendar.month_name[self.displayed_month]} {self.displayed_year}",
+            font=("Helvetica", 16, "bold"),
+            bg='#f0f0f0'
+        )
+        month_label.pack(side=tk.LEFT, expand=True, padx=10)
+
+        next_month_btn = tk.Button(
+            nav_frame,
+            text=">",
+            command=self.next_month,
+            font=("Helvetica", 12),
+            width=3,
+            bg='#4CAF50',
+            fg='white',
+            activebackground='#45a049'
+        )
+        next_month_btn.pack(side=tk.RIGHT)
 
         # Calendar display
         calendar_grid = tk.Frame(calendar_frame, bg='#f0f0f0')
         calendar_grid.pack(expand=True)
 
-        # Month and year label
-        month_label = tk.Label(calendar_grid,
-                               text=f"{calendar.month_name[now.month]} {now.year}",
-                               font=("Helvetica", 16, "bold"),
-                               bg='#f0f0f0')
-        month_label.grid(row=0, column=1, columnspan=5, pady=10)
-
         # Weekday headers
         weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
         for idx, day in enumerate(weekdays):
-            tk.Label(calendar_grid, text=day, bg='#f0f0f0', font=("Helvetica", 10)).grid(row=1, column=idx, padx=5,
-                                                                                         pady=5)
+            tk.Label(calendar_grid, text=day, bg='#f0f0f0', font=("Helvetica", 10)).grid(row=0, column=idx, padx=5, pady=5)
 
-        # Populate calendar
+        # Get month calendar
+        cal = calendar.monthcalendar(self.displayed_year, self.displayed_month)
         for week_idx, week in enumerate(cal):
             for day_idx, day in enumerate(week):
                 if day == 0:
                     continue
 
-                day_date = date(now.year, now.month, day)
+                day_date = date(self.displayed_year, self.displayed_month, day)
 
                 # Check day availability and conditions
                 is_available = (day_idx + 1) in available_days and \
@@ -182,11 +213,29 @@ class ChooseConsultView(View):
                         **day_btn_style
                     )
 
-                day_btn.grid(row=week_idx + 2, column=day_idx, padx=2, pady=2)
+                day_btn.grid(row=week_idx + 1, column=day_idx, padx=2, pady=2)
 
         # Enable/disable buttons
         self.back_btn.config(state=tk.NORMAL)
         self.next_btn.config(state=tk.DISABLED)
+
+    def prev_month(self):
+        """Navigate to the previous month."""
+        if self.displayed_month == 1:
+            self.displayed_month = 12
+            self.displayed_year -= 1
+        else:
+            self.displayed_month -= 1
+        self.load_calendar(self.selected_teacher)
+
+    def next_month(self):
+        """Navigate to the next month."""
+        if self.displayed_month == 12:
+            self.displayed_month = 1
+            self.displayed_year += 1
+        else:
+            self.displayed_month += 1
+        self.load_calendar(self.selected_teacher)
 
     def is_holiday(self, date):
         year = date.year

@@ -44,10 +44,12 @@ class CheckBaseConsultView(View):
         }
 
         # Buttons
-        delete_btn = tk.Button(button_frame, text="Delete Consult", command=self.delete_consult, **button_style)
+        delete_btn = tk.Button(button_frame, text="Delete Consult", command=self.delete_consult, font=button_font, bg='#f44336', fg='white',
+                              activebackground='#d32f2f', relief='flat',
+                              padx=10, pady=5)
         delete_btn.pack(side='right', padx=5)
-        delete_btn.bind('<Enter>', lambda e: delete_btn.configure(bg='#45a049'))
-        delete_btn.bind('<Leave>', lambda e: delete_btn.configure(bg='#4CAF50'))
+        delete_btn.bind('<Enter>', lambda e: delete_btn.configure(bg='#d32f2f'))
+        delete_btn.bind('<Leave>', lambda e: delete_btn.configure(bg='#f44336'))
 
         home_btn = tk.Button(button_frame, text="Home", command=self.go_home, **button_style)
         home_btn.pack(side='right', padx=5)
