@@ -10,7 +10,7 @@ class RegisterView(View):
         self.window = Custom.get_window()
         Custom.clear_window(self.window)
 
-        self.window.title("User Registration")
+        self.window.title("eConsultation")
         self.window.geometry("1100x600")
         self.window.configure(bg='#f0f0f0')
 

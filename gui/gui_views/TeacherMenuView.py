@@ -4,7 +4,7 @@ import tkinter as tk
 class TeacherMenuView(MenuView):
     def __init__(self, controller, response=None):
         super().__init__(controller, response)
-        self.window.title("Teacher Menu")
+        self.window.title("eConsultation")
         self.title_label.configure(text="Teacher Menu")
 
     def get_menu_content(self):

@@ -19,7 +19,7 @@ class ChooseConsultView(View):
         self.selected_date = None
         self.selected_stamp = None
 
-        self.window.title("Choose Consultation")
+        self.window.title("eConsultation")
         self.window.geometry("1100x600")
         self.window.configure(bg='#f0f0f0')
 
@@ -35,7 +35,7 @@ class ChooseConsultView(View):
         # Subtitle
         subtitle_font = font.Font(family="Helvetica", size=12)
         self.subtitle_label = tk.Label(main_frame, text="Select a Teacher",
-                                       font=subtitle_font, bg='#f0f0f0', fg='#666666')
+                                        font=subtitle_font, bg='#f0f0f0', fg='#666666')
         self.subtitle_label.pack(pady=(0, 20))
 
         # Content frame
@@ -60,17 +60,33 @@ class ChooseConsultView(View):
             'pady': 5
         }
 
+        home_button_style = button_style.copy()
+        home_button_style.update({
+            'bg': '#f44336', 
+            'fg': 'white',
+            'activebackground': '#d32f2f'
+        })
+
+        # Home button
+        self.home_btn = tk.Button(nav_frame, text="Back to Home", command=self.go_home,
+                                    **home_button_style)
+        self.home_btn.pack(side=tk.LEFT, padx=10)
+
         # Back and Next buttons
         self.back_btn = tk.Button(nav_frame, text="Back", command=self.go_back,
-                                  state=tk.DISABLED, **button_style)
+                                    state=tk.DISABLED, **button_style)
         self.back_btn.pack(side=tk.LEFT, padx=10)
 
         self.next_btn = tk.Button(nav_frame, text="Next", command=self.go_next,
-                                  state=tk.DISABLED, **button_style)
+                                    state=tk.DISABLED, **button_style)
         self.next_btn.pack(side=tk.RIGHT, padx=10)
 
         # Load initial teachers
         self.load_teachers()
+
+    def go_home(self):
+        """Navigate back to the home screen."""
+        self.chooseConsultController.home()
 
     def load_teachers(self):
         # Clear previous content
