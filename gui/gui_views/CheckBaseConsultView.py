@@ -27,7 +27,7 @@ class CheckBaseConsultView(View):
         self.window.configure(bg=COLORS['background'])
 
         main_frame = tk.Frame(self.window, bg=COLORS['background'])
-        main_frame.pack(expand=True, fill='both', padx=30, pady=30)
+        main_frame.pack(expand=True, fill='both', padx=20, pady=20)
 
         title_font = font.Font(family="Segoe UI", size=max(24, int(self.window.winfo_screenwidth() * 0.02)), weight="bold")
         title_label = tk.Label(main_frame, text="Consultations", font=title_font, bg=COLORS['primary'], fg=COLORS['text_light'], anchor='center')
